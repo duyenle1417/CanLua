@@ -1,0 +1,22 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+    
+    <style name="ToolBarInput" parent="Theme.AppCompat">
+        <item name="android:background">@color/app_toolbar_Color</item>
+        <item name="android:textColor">@color/app_toolbar_textColor</item>
+        <item name="actionMenuTextColor">@color/app_toolbar_textColor</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+
+    <style name="TextViewLabel">
+        <item name="android:textColor">@color/textColor_label2</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+</resources>
