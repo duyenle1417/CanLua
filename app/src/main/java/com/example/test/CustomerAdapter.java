@@ -1,5 +1,7 @@
 package com.example.test;
 
+import android.database.Cursor;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -11,26 +13,31 @@ import java.util.ArrayList;
 
 public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.CustomerViewHolder> {
 
-    ArrayList<History> list;
+    ArrayList<Customer> list;
 
-    public CustomerAdapter(ArrayList<History> obj) {
+    public CustomerAdapter(ArrayList<Customer> obj) {
         list = obj;
     }
 
     @NonNull
     @Override
     public CustomerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return null;
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.home_item, parent, false);
+        CustomerViewHolder holder = new CustomerViewHolder(v);
+        return holder;
     }
 
     @Override
     public void onBindViewHolder(@NonNull CustomerViewHolder holder, int position) {
+        Customer customer = list.get(position);
 
+        holder.textView_name.setText(customer.getHoTen());
+        holder.textView_phone.setText(customer.getSDT());
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return list.size();
     }
 
     public static class CustomerViewHolder extends RecyclerView.ViewHolder {
