@@ -1,21 +1,26 @@
 package com.example.test;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
-import java.util.List;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity
+        implements AddCustomerDialog.AddCustomerDialogListener, RecycleViewItemOnClick {
 
     FloatingActionButton btn_add_customer;
     RecyclerView recyclerView_customer;
-    List<History> customerlist;
+    ArrayList<Customer> customerlist;
+    RecyclerView.Adapter adapter;
+    RecyclerView.LayoutManager layoutManager;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -24,11 +29,43 @@ public class HomeActivity extends AppCompatActivity {
 
         getView();
 
+        //btn thêm vào customer mới - hiện dialog
+        btn_add_customer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AddCustomerDialog dialog = new AddCustomerDialog();
+                dialog.show(getSupportFragmentManager(), "dialog add new customer");
+            }
+        });
     }
 
     private void getView() {
         btn_add_customer = findViewById(R.id.btn_add_customer);
         recyclerView_customer = findViewById(R.id.recycleview_customer);
         customerlist = new ArrayList<>();
+
+        adapter = new CustomerAdapter(customerlist, this);
+        recyclerView_customer.setAdapter(adapter);
+
+        layoutManager = new LinearLayoutManager(this);
+        recyclerView_customer.setLayoutManager(layoutManager);
+    }
+
+    @Override
+    public void AddItemView(String name, String phone) {
+        Customer customer = new Customer();
+        customer.setHoTen(name);
+        customer.setSDT(phone);
+
+        customerlist.add(customer);
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void OnItemClicked(int posotion) {
+        Intent intent = new Intent(HomeActivity.this, HistoryActivity.class);
+        intent.putExtra("name", customerlist.get(posotion).getHoTen());
+        intent.putExtra("phone", customerlist.get(posotion).getSDT());
+        HomeActivity.this.startActivity(intent);
     }
 }
