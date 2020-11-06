@@ -28,7 +28,6 @@
         android:layout_marginRight="16dp"
         android:background="@drawable/edit_text_bg"
         android:hint="Tên"
-
         android:inputType="textPersonName"
         android:nextFocusDown="@id/edittext_sdt"
         android:singleLine="true"
@@ -61,7 +60,8 @@
         android:layout_marginRight="16dp"
         android:background="@drawable/edit_text_bg"
         android:hint="Số điện thoại"
-        android:inputType="phone"
+        android:inputType="number|phone"
+        android:maxLength="13"
         android:nextFocusDown="@id/edittext_tenLua"
         android:singleLine="true"
         android:textSize="24sp"
