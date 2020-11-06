@@ -56,6 +56,8 @@ public class HomeActivity extends AppCompatActivity
         Customer customer = new Customer();
         customer.setHoTen(name);
         customer.setSDT(phone);
+
+        customerlist.add(customer);
         adapter.notifyDataSetChanged();
     }
 }
