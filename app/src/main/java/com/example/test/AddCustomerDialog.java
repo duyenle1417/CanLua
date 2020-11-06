@@ -2,6 +2,7 @@ package com.example.test;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -46,6 +47,17 @@ public class AddCustomerDialog extends AppCompatDialogFragment {
                     }
                 });
         return builder.create();
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        try {
+            listener = (AddCustomerDialogListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString() +
+                    "must implement AddCustomerDialogListener");
+        }
     }
 
     public interface AddCustomerDialogListener {
