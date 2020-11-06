@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,9 +22,9 @@ public class AddCustomerDialog extends AppCompatDialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.dialog_customer_add, null);
+        final View view = inflater.inflate(R.layout.dialog_customer_add, null);
 
         editText_name = view.findViewById(R.id.edittext_tenKH_dialog);
         editText_phone = view.findViewById(R.id.edittext_sdt_dialog);
@@ -37,6 +38,8 @@ public class AddCustomerDialog extends AppCompatDialogFragment {
                         String phone = editText_phone.getText().toString();
                         if (name.length() > 0 && phone.length() > 0) {
                             listener.AddItemView(name, phone);
+                        } else {
+                            Toast.makeText(view.getContext(), "Hãy nhập đầy đủ cả hai khung nhập!", Toast.LENGTH_SHORT).show();
                         }
                     }
                 })

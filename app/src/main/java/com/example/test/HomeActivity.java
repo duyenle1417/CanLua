@@ -1,5 +1,6 @@
 package com.example.test;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -13,7 +14,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 
 public class HomeActivity extends AppCompatActivity
-        implements AddCustomerDialog.AddCustomerDialogListener {
+        implements AddCustomerDialog.AddCustomerDialogListener, RecycleViewItemOnClick {
 
     FloatingActionButton btn_add_customer;
     RecyclerView recyclerView_customer;
@@ -36,7 +37,6 @@ public class HomeActivity extends AppCompatActivity
                 dialog.show(getSupportFragmentManager(), "dialog add new customer");
             }
         });
-
     }
 
     private void getView() {
@@ -44,7 +44,7 @@ public class HomeActivity extends AppCompatActivity
         recyclerView_customer = findViewById(R.id.recycleview_customer);
         customerlist = new ArrayList<>();
 
-        adapter = new CustomerAdapter(customerlist);
+        adapter = new CustomerAdapter(customerlist, this);
         recyclerView_customer.setAdapter(adapter);
 
         layoutManager = new LinearLayoutManager(this);
@@ -59,5 +59,13 @@ public class HomeActivity extends AppCompatActivity
 
         customerlist.add(customer);
         adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void OnItemClicked(int posotion) {
+        Intent intent = new Intent(HomeActivity.this, HistoryActivity.class);
+        intent.putExtra("name", customerlist.get(posotion).getHoTen());
+        intent.putExtra("phone", customerlist.get(posotion).getSDT());
+        HomeActivity.this.startActivity(intent);
     }
 }

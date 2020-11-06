@@ -21,6 +21,20 @@
         </activity>
 
         <activity
+            android:name=".HistoryActivity"
+            android:configChanges="screenLayout|screenSize|orientation"
+            android:windowSoftInputMode="stateAlwaysHidden">
+
+        </activity>
+
+        <activity
+            android:name=".InputCustomerInfoActivity"
+            android:configChanges="screenLayout|screenSize|orientation"
+            android:windowSoftInputMode="stateAlwaysHidden">
+
+        </activity>
+
+        <activity
             android:name=".InputWeightActivity"
             android:configChanges="screenLayout|screenSize|orientation"
             android:windowSoftInputMode="stateAlwaysHidden">
