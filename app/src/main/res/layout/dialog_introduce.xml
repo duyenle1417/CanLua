@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_introduce"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/app_banner_Color">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_guide_white"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Giới thiệu App"
+            android:textColor="@color/editTextBG_Color2"
+            android:textSize="20sp"
+            android:layout_marginLeft="40dp"/>
+    </androidx.appcompat.widget.Toolbar>
+
+    <TextView
+        android:id="@+id/introduce1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_introduce"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:textSize="20sp"
+        android:textColor="@color/colorPrimaryDark"
+        android:layout_marginLeft="10dp"
+        android:text="★ Phần mềm giúp cho bà con nông dân có thể tính nhanh mã cân sản phẩm của mình mà không cần phải dùng đến giấy bút" />
+
+    <TextView
+        android:id="@+id/introduce2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/introduce1"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:textSize="20sp"
+        android:textColor="@color/colorPrimaryDark"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:text="★ Việc cần làm là nhập số và phần mềm sẽ được ra kết quả cho bạn."/>
+
+    <TextView
+        android:id="@+id/introduce3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/introduce2"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:textSize="20sp"
+        android:textColor="@color/colorPrimaryDark"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:text="★ Dữ liệu sẽ được tự động lưu lại sau khi vừa nhập xong."/>
+
+    <TextView
+        android:id="@+id/introduce4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/introduce3"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:textSize="20sp"
+        android:textColor="@color/colorPrimaryDark"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:text="★ Có thể xem lại tất cả mã cân dã lưu bất cứ khi nào cần."/>
+
+    <TextView
+        android:id="@+id/introduce5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/introduce4"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:textSize="20sp"
+        android:textColor="@color/colorPrimaryDark"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:text="★ Tự động ra kết quả tổng, trừ bì bao và thành tiền."/>
+
+    <TextView
+        android:id="@+id/introduce6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/introduce5"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:textSize="20sp"
+        android:textColor="@color/colorPrimaryDark"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:text="★ Nhanh chóng tiện lợi cho dù cân lúa buổi tối hay sáng."/>
+
+    <TextView
+        android:id="@+id/introduce7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/introduce6"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:textSize="20sp"
+        android:textColor="@color/colorPrimaryDark"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:text="★ Không cần phải đem theo giấy bút và mất công tính toán như truyền thống cân lúa của bà con nông dân."/>
+
+    <Button
+        android:id="@+id/btnCancel"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/introduce7"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginLeft="70dp"
+        android:layout_marginTop="10dp"
+        android:text="Đóng"
+        android:textColor="@color/editTextBG_Color2"
+        android:background="@color/app_banner_Color"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
