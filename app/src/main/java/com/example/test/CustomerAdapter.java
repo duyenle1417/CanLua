@@ -1,24 +1,37 @@
 package com.example.test;
 
+import android.app.Dialog;
+import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
 public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.CustomerViewHolder> {
 
+    Context context;
     ArrayList<Customer> list;
     private static RecycleViewItemOnClick recycleViewItemOnClick;
 
-    public CustomerAdapter(ArrayList<Customer> obj, RecycleViewItemOnClick recycleViewItemOnClick) {
+    /*public CustomerAdapter(ArrayList<Customer> obj, RecycleViewItemOnClick recycleViewItemOnClick) {
         list = obj;
+        this.recycleViewItemOnClick = recycleViewItemOnClick;
+    }*/
+
+    public CustomerAdapter(Context context, ArrayList<Customer> list, RecycleViewItemOnClick recycleViewItemOnClick) {
+        this.context = context;
+        this.list = list;
         this.recycleViewItemOnClick = recycleViewItemOnClick;
     }
 
@@ -31,11 +44,27 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.Custom
     }
 
     @Override
-    public void onBindViewHolder(@NonNull CustomerViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final CustomerViewHolder holder, int position) {
         Customer customer = list.get(position);
 
         holder.textView_name.setText(customer.getHoTen());
         holder.textView_phone.setText(customer.getSDT());
+        holder.ic_more_menu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PopupMenu popup = new PopupMenu(context, holder.ic_more_menu);
+                popup.getMenuInflater().inflate(R.menu.pop_up, popup.getMenu());
+                popup.show();
+
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        Toast.makeText(context, "" + item.getTitle(), Toast.LENGTH_SHORT).show();
+                        return true;
+                    }
+                });
+            }
+        });
     }
 
     @Override

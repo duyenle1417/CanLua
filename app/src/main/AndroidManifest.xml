@@ -10,6 +10,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".activity_Dat"
+            android:label="@string/title_activity__dat"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
             android:name=".HomeActivity"
             android:configChanges="screenLayout|screenSize|orientation"
             android:windowSoftInputMode="stateAlwaysHidden">
@@ -19,35 +23,22 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".HistoryActivity"
             android:configChanges="screenLayout|screenSize|orientation"
-            android:windowSoftInputMode="stateAlwaysHidden">
-
-        </activity>
-
+            android:windowSoftInputMode="stateAlwaysHidden"></activity>
         <activity
             android:name=".InputCustomerInfoActivity"
             android:configChanges="screenLayout|screenSize|orientation"
-            android:windowSoftInputMode="stateAlwaysHidden">
-
-        </activity>
-
+            android:windowSoftInputMode="stateAlwaysHidden"></activity>
         <activity
             android:name=".InputWeightActivity"
             android:configChanges="screenLayout|screenSize|orientation"
-            android:windowSoftInputMode="stateAlwaysHidden">
-
-        </activity>
-
+            android:windowSoftInputMode="stateAlwaysHidden"></activity>
         <activity
             android:name=".PreviewActivity"
             android:configChanges="screenLayout|screenSize|orientation"
-            android:windowSoftInputMode="stateAlwaysHidden">
-
-        </activity>
-
+            android:windowSoftInputMode="stateAlwaysHidden"></activity>
     </application>
 
 </manifest>
