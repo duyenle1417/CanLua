@@ -2,6 +2,8 @@ package com.example.test;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -22,13 +24,14 @@ import com.google.android.material.navigation.NavigationView;
 import java.util.ArrayList;
 
 public class HomeActivity extends AppCompatActivity
-        implements AddCustomerDialog.AddCustomerDialogListener, RecycleViewItemOnClick {
+        implements AddCustomerDialog.AddCustomerListener, RecycleViewItemOnClick {
 
     FloatingActionButton btn_add_customer;
     RecyclerView recyclerView_customer;
     ArrayList<Customer> customerlist;
     RecyclerView.Adapter adapter;
     RecyclerView.LayoutManager layoutManager;
+    SQLiteDatabase sqLiteDatabase;
     DrawerLayout drawerLayout;
     NavigationView navigationView;
     ListView listView, header;
@@ -44,6 +47,10 @@ public class HomeActivity extends AppCompatActivity
         setContentView(R.layout.home_layout);
 
         getView();
+        actionToolbar();
+        actionMenu();
+        actionDialog();
+        actionHeader();
 
         //btn thêm vào customer mới - hiện dialog
         btn_add_customer.setOnClickListener(new View.OnClickListener() {
@@ -53,14 +60,9 @@ public class HomeActivity extends AppCompatActivity
                 dialog.show(getSupportFragmentManager(), "dialog add new customer");
             }
         });
-
-        anhXa();
-        actionToolbar();
-        actionMenu();
-        actionDialog();
-        actionHeader();
     }
 
+    //header cho navigation drawer - hiển thị tên ap vầ version
     private void actionHeader() {
         arrayListHeader = new ArrayList<>();
         arrayListHeader.add(new HeaderNavigation("Cân Lúa", "v1.0.0"));
@@ -68,12 +70,14 @@ public class HomeActivity extends AppCompatActivity
         header.setAdapter(adapterHeader);
     }
 
+    //menu navigation drawer
     private void actionDialog() {
         final Dialog dialog = new Dialog(this);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 switch (position) {
+                    //thông tin app
                     case 0:
                         dialog.setContentView(R.layout.dialog_info);
                         dialog.show();
@@ -85,6 +89,7 @@ public class HomeActivity extends AppCompatActivity
                             }
                         });
                         break;
+                    //giới thiệu app
                     case 1:
                         dialog.setContentView(R.layout.dialog_introduce);
                         dialog.show();
@@ -102,6 +107,7 @@ public class HomeActivity extends AppCompatActivity
         });
     }
 
+    //menu item cho navigation drawer
     private void actionMenu() {
         arrayList = new ArrayList<>();
         arrayList.add(new itemMenu("Thông tin", R.drawable.ic_info));
@@ -111,6 +117,7 @@ public class HomeActivity extends AppCompatActivity
         listView.setAdapter(adapterMenu);
     }
 
+    //set hamburger icon để mở navigation drawer
     private void actionToolbar() {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -123,36 +130,53 @@ public class HomeActivity extends AppCompatActivity
         });
     }
 
-    private void anhXa() {
+    //ánh xạ view và lấy data từ DB về hiển thị trên recycleview
+    private void getView() {
+        //ánh xạ view
+        btn_add_customer = findViewById(R.id.btn_add_customer);
+        recyclerView_customer = findViewById(R.id.recycleview_customer);
         toolbar = (Toolbar) findViewById(R.id.toolbar_home);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         navigationView = (NavigationView) findViewById(R.id.navigationView);
         listView = (ListView) findViewById(R.id.navigationListview);
         header = (ListView) findViewById(R.id.navigationHeader);
-        //btnAdd = findViewById(R.id.btn_add_customer);;
-    }
-
-    private void getView() {
-        btn_add_customer = findViewById(R.id.btn_add_customer);
-        recyclerView_customer = findViewById(R.id.recycleview_customer);
         customerlist = new ArrayList<>();
 
-        //adapter = new CustomerAdapter(customerlist, this);
-        adapter = new CustomerAdapter(getApplicationContext(),customerlist, this);
+        //adapter và layoutmanager cho recycleview
+        adapter = new CustomerAdapter(getApplicationContext(), customerlist, this);
         recyclerView_customer.setAdapter(adapter);
-
         layoutManager = new LinearLayoutManager(this);
         recyclerView_customer.setLayoutManager(layoutManager);
+
+        getCustomerAll();//lấy dữ liệu từ DB table customer
     }
 
-    @Override
-    public void AddItemView(String name, String phone) {
-        Customer customer = new Customer();
-        customer.setHoTen(name);
-        customer.setSDT(phone);
+    //lấy dữ liệu từ DB vô ArrayList
+    private void getCustomerAll() {
+        DatabaseHelper helper = new DatabaseHelper(this, DatabaseHelper.DATABASE_NAME, null, DatabaseHelper.DATABASE_VERSION);
+        sqLiteDatabase = helper.getReadableDatabase();
 
-        customerlist.add(customer);
+        ArrayList<Customer> list = new ArrayList<>();
+        String GET_ALL_DATA = "SELECT * FROM " + DatabaseContract.CustomerTable.TABLE_NAME +
+                " ORDER BY " + DatabaseContract.CustomerTable.COLUMN_TENKH + " ASC, "
+                + DatabaseContract.CustomerTable._ID + " DESC;";
+        Cursor cursor = sqLiteDatabase.rawQuery(GET_ALL_DATA, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Customer customer = new Customer();
+                customer.setHoTen(cursor.getString(cursor.getColumnIndex(DatabaseContract.CustomerTable.COLUMN_TENKH)));
+                customer.setSDT(cursor.getString(cursor.getColumnIndex(DatabaseContract.CustomerTable.COLUMN_SDT)));
+                customer.setDate(cursor.getString(cursor.getColumnIndex(DatabaseContract.CustomerTable.COLUMN_TIMESTAMP)));
+                list.add(customer);
+            } while (cursor.moveToNext());
+        }
+
+        //đưa dữ liệu vào customerlist và gọi adapter
+        customerlist.clear();
+        customerlist.addAll(list);
         adapter.notifyDataSetChanged();
+        cursor.close();
     }
 
     @Override
@@ -162,5 +186,11 @@ public class HomeActivity extends AppCompatActivity
         intent.putExtra("phone", customerlist.get(position).getSDT());
         HomeActivity.this.startActivity(intent);
         HomeActivity.this.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
+    }
+
+    @Override
+    public void ApplyChange(String name, String phone) {
+        getCustomerAll();
+        //adapter.notifyDataSetChanged();
     }
 }

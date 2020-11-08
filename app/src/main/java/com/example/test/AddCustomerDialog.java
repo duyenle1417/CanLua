@@ -2,8 +2,10 @@ package com.example.test;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,10 +16,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDialogFragment;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 public class AddCustomerDialog extends AppCompatDialogFragment {
     EditText editText_name;
     EditText editText_phone;
-    AddCustomerDialogListener listener;
+    SQLiteDatabase sqLiteDatabase;
+    AddCustomerListener listener;
 
     @NonNull
     @Override
@@ -36,8 +42,9 @@ public class AddCustomerDialog extends AppCompatDialogFragment {
                     public void onClick(DialogInterface dialog, int which) {
                         String name = editText_name.getText().toString();
                         String phone = editText_phone.getText().toString();
-                        if (name.length() > 0 && phone.length() > 0) {
-                            listener.AddItemView(name, phone);
+                        if (ValidateData(name)) {
+                            AddCustomer(name, phone);//DB
+                            listener.ApplyChange(name, phone);
                         } else {
                             Toast.makeText(view.getContext(), "Hãy nhập đầy đủ cả hai khung nhập!", Toast.LENGTH_SHORT).show();
                         }
@@ -56,14 +63,45 @@ public class AddCustomerDialog extends AppCompatDialogFragment {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         try {
-            listener = (AddCustomerDialogListener) context;
+            // Instantiate the EditDateDialogListener so we can send events to the host
+            listener = (AddCustomerListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() +
-                    "must implement AddCustomerDialogListener");
+            // The activity doesn't implement the interface, throw exception
+            throw new ClassCastException(context.toString() + " must implement EditDateDialogListener");
         }
     }
 
-    public interface AddCustomerDialogListener {
-        void AddItemView(String name, String phone);
+    private boolean ValidateData(String name) {
+        if (name.length() > 0)
+            return true;
+        else {
+            editText_name.setError("Không được để trống!");
+            editText_name.requestFocus();
+            return false;
+        }
+    }
+
+    private void AddCustomer(String name, String phone) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        String date = dateFormat.format(Calendar.getInstance().getTime());
+        DatabaseHelper helper = new DatabaseHelper(getContext(), DatabaseHelper.DATABASE_NAME, null, DatabaseHelper.DATABASE_VERSION);
+        sqLiteDatabase = helper.getWritableDatabase();
+
+        //
+        ContentValues cv = new ContentValues();
+        cv.put(DatabaseContract.CustomerTable.COLUMN_TENKH, name);
+        if (phone.length() > 0)
+            cv.put(DatabaseContract.CustomerTable.COLUMN_SDT, phone);
+        else
+            cv.put(DatabaseContract.CustomerTable.COLUMN_SDT, "---");
+        cv.put(DatabaseContract.CustomerTable.COLUMN_TIMESTAMP, date);
+
+
+        //
+        sqLiteDatabase.insert(DatabaseContract.CustomerTable.TABLE_NAME, null, cv);
+    }
+
+    public interface AddCustomerListener {
+        void ApplyChange(String name, String phone);
     }
 }

@@ -159,7 +159,6 @@ public class InputWeightActivity extends AppCompatActivity
         String text = gson.toJson(listWeight);
         FileOutputStream fileOutputStream =  null;
 
-        File file;
         try {
             fileOutputStream = openFileOutput(FILE_NAME, MODE_PRIVATE);
             fileOutputStream.write(text.getBytes());
@@ -247,7 +246,7 @@ public class InputWeightActivity extends AppCompatActivity
                 File file = new File(dir, FILE_NAME);
                 file.delete();
                 Intent intent = new Intent(InputWeightActivity.this, PreviewActivity.class);
-                InputWeightActivity.this.finish();
+                //InputWeightActivity.this.finish();
                 InputWeightActivity.this.startActivity(intent);
         }
 

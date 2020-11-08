@@ -7,7 +7,7 @@
     tools:context=".PreviewActivity">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/preview_toolbar"
+        android:id="@+id/info_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:theme="@style/ToolBarInput"
@@ -24,7 +24,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/preview_toolbar">
+        app:layout_constraintTop_toBottomOf="@id/info_toolbar">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -165,7 +165,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/edittext_trubi_info" />
 
             <EditText
-                android:id="@+id/edittext_tiencoc"
+                android:id="@+id/edittext_tiencoc_info"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"

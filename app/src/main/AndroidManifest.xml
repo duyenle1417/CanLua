@@ -10,10 +10,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".activity_Dat"
-            android:label="@string/title_activity__dat"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity
             android:name=".HomeActivity"
             android:configChanges="screenLayout|screenSize|orientation"
             android:windowSoftInputMode="stateAlwaysHidden">

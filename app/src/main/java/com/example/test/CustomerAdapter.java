@@ -1,6 +1,5 @@
 package com.example.test;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -13,16 +12,15 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
-import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
 public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.CustomerViewHolder> {
 
+    private static RecycleViewItemOnClick recycleViewItemOnClick;
     Context context;
     ArrayList<Customer> list;
-    private static RecycleViewItemOnClick recycleViewItemOnClick;
 
     /*public CustomerAdapter(ArrayList<Customer> obj, RecycleViewItemOnClick recycleViewItemOnClick) {
         list = obj;
@@ -32,7 +30,7 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.Custom
     public CustomerAdapter(Context context, ArrayList<Customer> list, RecycleViewItemOnClick recycleViewItemOnClick) {
         this.context = context;
         this.list = list;
-        this.recycleViewItemOnClick = recycleViewItemOnClick;
+        CustomerAdapter.recycleViewItemOnClick = recycleViewItemOnClick;
     }
 
     @NonNull

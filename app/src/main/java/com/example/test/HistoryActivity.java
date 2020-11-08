@@ -81,6 +81,7 @@ public class HistoryActivity extends AppCompatActivity
 
     @Override
     public void OnItemClicked(int posotion) {
-
+        Intent intent = new Intent(HistoryActivity.this, InputCustomerInfoActivity.class);
+        HistoryActivity.this.startActivity(intent);
     }
 }

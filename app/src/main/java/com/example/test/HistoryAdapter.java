@@ -65,14 +65,14 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
             textView_sokg = itemView.findViewById(R.id.history_item_sokg_data);
             textView_tiencoc = itemView.findViewById(R.id.history_item_tiencoc_data);
             textView_thanhtien = itemView.findViewById(R.id.history_item_thanhtien_data);
-            /*cardView = itemView.findViewById(R.id.home_item_card);
+            cardView = itemView.findViewById(R.id.home_item_card);
 
             cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     recycleViewItemOnClick.OnItemClicked(getAdapterPosition());
                 }
-            });*/
+            });
         }
     }
 }

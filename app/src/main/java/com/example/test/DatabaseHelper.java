@@ -5,9 +5,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import com.example.test.DatabaseContract.*;
 
 import androidx.annotation.Nullable;
+
+import com.example.test.DatabaseContract.CustomerTable;
+import com.example.test.DatabaseContract.HistoryTable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +30,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 HistoryTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 HistoryTable.COLUMN_TENKH + " VARCHAR, " +
                 HistoryTable.COLUMN_SDT + " VARCHAR, " +
+                HistoryTable.COLUMN_DATEJOIN + " VARCHAR, " +
                 HistoryTable.COLUMN_TENGIONG + " VARCHAR, " +
                 HistoryTable.COLUMN_DONGIA + " MONEY, " +
                 HistoryTable.COLUMN_BAOBI + " INTEGER, " +
@@ -35,10 +38,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 HistoryTable.COLUMN_TONGKG + " DECIMAL, " +
                 HistoryTable.COLUMN_THANHTIEN + " MONEY, " +
                 HistoryTable.COLUMN_TIENCOC + " MONEY, " +
-                HistoryTable.COLUMN_TIMESTAMP + " TIMESTAMP DEFAULT CURRENT_TIMESTAMP" +
+                HistoryTable.COLUMN_TIMESTAMP + " VARCHAR" +
                 ");";
 
+        String CREATE_CUSTOMER_TABLE = "CREATE TABLE " +
+                CustomerTable.TABLE_NAME + " (" +
+                CustomerTable._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                CustomerTable.COLUMN_TENKH + " VARCHAR, " +
+                CustomerTable.COLUMN_SDT + " VARCHAR, " +
+                CustomerTable.COLUMN_TIMESTAMP + " VARCHAR" +
+                ");";
         db.execSQL(CREATE_HISTORY_TABLE);
+        db.execSQL(CREATE_CUSTOMER_TABLE);
     }
 
     @Override
@@ -47,27 +58,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public void addData(History obj){
+    public void addData(History obj) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
-        cv.put(HistoryTable.COLUMN_TENKH,obj.getHoTen());
-        cv.put(HistoryTable.COLUMN_SDT,obj.getSDT());
-        cv.put(HistoryTable.COLUMN_TENGIONG,obj.getTenGiongLua());
-        cv.put(HistoryTable.COLUMN_DONGIA,obj.getDonGia());
-        cv.put(HistoryTable.COLUMN_BAOBI,obj.getBaoBi());
-        cv.put(HistoryTable.COLUMN_TONGBAO,obj.getSoBao());
-        cv.put(HistoryTable.COLUMN_TONGKG,obj.getTongSoKG());
-        cv.put(HistoryTable.COLUMN_THANHTIEN,obj.getThanhTien());
-        cv.put(HistoryTable.COLUMN_TIENCOC,obj.getTienCoc());
+        cv.put(HistoryTable.COLUMN_TENKH, obj.getHoTen());
+        cv.put(HistoryTable.COLUMN_SDT, obj.getSDT());
+        cv.put(HistoryTable.COLUMN_TENGIONG, obj.getTenGiongLua());
+        cv.put(HistoryTable.COLUMN_DONGIA, obj.getDonGia());
+        cv.put(HistoryTable.COLUMN_BAOBI, obj.getBaoBi());
+        cv.put(HistoryTable.COLUMN_TONGBAO, obj.getSoBao());
+        cv.put(HistoryTable.COLUMN_TONGKG, obj.getTongSoKG());
+        cv.put(HistoryTable.COLUMN_THANHTIEN, obj.getThanhTien());
+        cv.put(HistoryTable.COLUMN_TIENCOC, obj.getTienCoc());
 
         db.insert(HistoryTable.TABLE_NAME, null, cv);
     }
 
-    public History getData(int ID){
+    public History getData(int ID) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(HistoryTable.TABLE_NAME,
-                new String[] { HistoryTable._ID,
+                new String[]{HistoryTable._ID,
                         HistoryTable.COLUMN_TENKH,
                         HistoryTable.COLUMN_SDT,
                         HistoryTable.COLUMN_TENGIONG,
@@ -77,8 +88,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         HistoryTable.COLUMN_TONGKG,
                         HistoryTable.COLUMN_THANHTIEN,
                         HistoryTable.COLUMN_TIENCOC},
-                HistoryTable._ID+ "=?",
-                new String[] { String.valueOf(ID) },
+                HistoryTable._ID + "=?",
+                new String[]{String.valueOf(ID)},
                 null,
                 null,
                 null,
@@ -98,7 +109,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return history;
     }
 
-    public List<History> getAllData(){
+    public List<History> getAllData() {
         List<History> historyList = new ArrayList<>();
         String GET_ALL_DATA = "SELECT * FROM " + HistoryTable.TABLE_NAME;
 
@@ -106,7 +117,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         //Cursor cursor = db.rawQuery(GET_ALL_DATA,null);
 
         Cursor cursor = db.query(HistoryTable.TABLE_NAME,
-                new String[] { HistoryTable._ID,
+                new String[]{HistoryTable._ID,
                         HistoryTable.COLUMN_TENKH,
                         HistoryTable.COLUMN_SDT,
                         HistoryTable.COLUMN_TENGIONG,
@@ -140,24 +151,40 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return historyList;
     }
 
-    public int updateData(History obj){
+    public int updateData(History obj) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
-        cv.put(HistoryTable.COLUMN_TENKH,obj.getHoTen());
-        cv.put(HistoryTable.COLUMN_SDT,obj.getSDT());
-        cv.put(HistoryTable.COLUMN_TENGIONG,obj.getTenGiongLua());
-        cv.put(HistoryTable.COLUMN_DONGIA,obj.getDonGia());
-        cv.put(HistoryTable.COLUMN_BAOBI,obj.getBaoBi());
-        cv.put(HistoryTable.COLUMN_TIENCOC,obj.getTienCoc());
+        cv.put(HistoryTable.COLUMN_TENKH, obj.getHoTen());
+        cv.put(HistoryTable.COLUMN_SDT, obj.getSDT());
+        cv.put(HistoryTable.COLUMN_TENGIONG, obj.getTenGiongLua());
+        cv.put(HistoryTable.COLUMN_DONGIA, obj.getDonGia());
+        cv.put(HistoryTable.COLUMN_BAOBI, obj.getBaoBi());
+        cv.put(HistoryTable.COLUMN_TIENCOC, obj.getTienCoc());
 
         return db.update(HistoryTable.TABLE_NAME, cv, HistoryTable._ID + " = ?",
                 new String[]{String.valueOf(obj.getID())});
     }
 
-    public void deleteData(History obj){
+    public void deleteData(History obj) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(HistoryTable.TABLE_NAME,HistoryTable._ID + " = ?",
+        db.delete(HistoryTable.TABLE_NAME, HistoryTable._ID + " = ?",
                 new String[]{String.valueOf(obj.getID())});
         db.close();
+    }
+
+    public interface DatabaseCRUD {
+        void AddCustomer(String name, String phone);
+
+        void AddHistory(History history);
+
+        ArrayList<Customer> getCusotomerList();
+
+        Customer getCusotomer();
+
+        ArrayList<History> getHistoryList();
+
+        History getHistory();
+
+        void deleteHistory();
     }
 }
