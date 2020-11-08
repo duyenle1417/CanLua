@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menuView"
+        android:title="Xem"/>
+    <item
+        android:id="@+id/menuDel"
+        android:title="Xóa"/>
+    <item
+        android:id="@+id/menuEdit"
+        android:title="Sửa"/>
+
+</menu>
