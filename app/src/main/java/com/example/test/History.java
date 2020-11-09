@@ -1,7 +1,7 @@
 package com.example.test;
 
 public class History {
-    private String HoTen, SDT, TenGiongLua;
+    private String HoTen, SDT, TenGiongLua, DateJoin, Timestamp;
     private int DonGia, BaoBi, SoBao, ThanhTien, TienCoc, ID;
     private double TongSoKG;
 
@@ -83,5 +83,21 @@ public class History {
 
     public int getTienCoc() {
         return TienCoc;
+    }
+
+    public String getDateJoin() {
+        return DateJoin;
+    }
+
+    public void setDateJoin(String dateJoin) {
+        DateJoin = dateJoin;
+    }
+
+    public String getTimestamp() {
+        return Timestamp;
+    }
+
+    public void setTimestamp(String timestamp) {
+        Timestamp = timestamp;
     }
 }

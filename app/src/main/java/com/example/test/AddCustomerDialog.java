@@ -46,7 +46,7 @@ public class AddCustomerDialog extends AppCompatDialogFragment {
                             AddCustomer(name, phone);//DB
                             listener.ApplyChange(name, phone);
                         } else {
-                            Toast.makeText(view.getContext(), "Hãy nhập đầy đủ cả hai khung nhập!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(view.getContext(), "Lỗi! Không được để trống tên.", Toast.LENGTH_SHORT).show();
                         }
                     }
                 })
@@ -82,8 +82,8 @@ public class AddCustomerDialog extends AppCompatDialogFragment {
     }
 
     private void AddCustomer(String name, String phone) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-        String date = dateFormat.format(Calendar.getInstance().getTime());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        String date = dateFormat.format(Calendar.getInstance().getTime());//time lấy khi ấn OK
         DatabaseHelper helper = new DatabaseHelper(getContext(), DatabaseHelper.DATABASE_NAME, null, DatabaseHelper.DATABASE_VERSION);
         sqLiteDatabase = helper.getWritableDatabase();
 

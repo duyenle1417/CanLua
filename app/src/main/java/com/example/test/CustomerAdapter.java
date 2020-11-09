@@ -1,6 +1,9 @@
 package com.example.test;
 
 import android.content.Context;
+import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -8,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -42,7 +44,7 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.Custom
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final CustomerViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final CustomerViewHolder holder, final int position) {
         Customer customer = list.get(position);
 
         holder.textView_name.setText(customer.getHoTen());
@@ -57,17 +59,57 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.Custom
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-                        Toast.makeText(context, "" + item.getTitle(), Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(context, "" + item.getTitle(), Toast.LENGTH_SHORT).show();
+                        switch (item.getItemId()) {
+                            case R.id.menuView:
+                                Intent intent = new Intent(context, HistoryActivity.class);
+                                intent.putExtra("name", list.get(position).getHoTen());
+                                intent.putExtra("phone", list.get(position).getSDT());
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                context.startActivity(intent);
+                                //HomeActivity.this.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
+                                return true;
+                            case R.id.menuEdit:
+                                break;
+                            case R.id.menuDel:
+                                deleteData(position);
+                                Log.e("delete TEST", "item ######");
+                                //reset HomeActivity và lấy dữ liệu từ DB
+                                ((HomeActivity) context).finish();
+                                context.startActivity(((HomeActivity) context).getIntent());
+                                ((HomeActivity) context).overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
+                                return true;
+                            default:
+                                throw new IllegalStateException("Unexpected value: " + item.getItemId());
+                        }
                         return true;
                     }
                 });
             }
         });
+
+        holder.itemView.setTag(list.get(position).getID());
     }
 
     @Override
     public int getItemCount() {
         return list.size();
+    }
+
+    public void deleteData(int position) {
+        DatabaseHelper helper = new DatabaseHelper(context, DatabaseHelper.DATABASE_NAME, null, DatabaseHelper.DATABASE_VERSION);
+        SQLiteDatabase db = helper.getWritableDatabase();
+        String DELETE_CUSTOMER = "DELETE FROM " + DatabaseContract.CustomerTable.TABLE_NAME +
+                " WHERE " + DatabaseContract.CustomerTable.COLUMN_TIMESTAMP + " LIKE '%" + list.get(position).getDate() + "%'" +
+                " AND " + DatabaseContract.CustomerTable.COLUMN_TENKH + " LIKE '%" + list.get(position).getHoTen() + "%'" +
+                " AND " + DatabaseContract.CustomerTable._ID + " LIKE '%" + list.get(position).getID() + "%';";
+        db.execSQL(DELETE_CUSTOMER);
+
+        String DELETE_HISTORY = "DELETE FROM " + DatabaseContract.HistoryTable.TABLE_NAME +
+                " WHERE " + DatabaseContract.HistoryTable.COLUMN_DATEJOIN + " LIKE '%" + list.get(position).getDate() + "%'" +
+                " AND " + DatabaseContract.HistoryTable.COLUMN_TENKH + " LIKE '%" + list.get(position).getHoTen() + "%'" +
+                " AND " + DatabaseContract.HistoryTable.COLUMN_SDT + " LIKE '%" + list.get(position).getSDT() + "%'";
+        db.execSQL(DELETE_HISTORY);
     }
 
     public static class CustomerViewHolder extends RecyclerView.ViewHolder {

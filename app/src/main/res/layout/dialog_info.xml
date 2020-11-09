@@ -30,12 +30,12 @@
         android:id="@+id/tvNameApp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar_info"
+        android:layout_marginLeft="8dp"
         android:text="- Phần mềm Cân Lúa v1.0.0"
-        android:textSize="20sp"
         android:textColor="@color/colorPrimaryDark"
-        android:layout_marginLeft="10dp"/>
+        android:textSize="20sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_info" />
 
     <TextView
         android:id="@+id/tvAuthor"
@@ -107,23 +107,23 @@
         android:id="@+id/tvPs"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/tvTeacher"
-        app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginLeft="10dp"
         android:text="Hãy liên hệ với chúng tôi nếu bạn cần hỗ trợ các vấn đề liên qua đến phần mềm"
         android:textColor="@color/colorPrimaryDark"
-        android:textSize="20sp"/>
+        android:textSize="20sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvTeacher" />
 
     <Button
         android:id="@+id/btnCancel"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/tvPs"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginLeft="70dp"
         android:layout_marginTop="10dp"
+        android:background="@color/app_banner_Color"
         android:text="Đóng"
         android:textColor="@color/editTextBG_Color2"
-        android:background="@color/app_banner_Color"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvPs" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

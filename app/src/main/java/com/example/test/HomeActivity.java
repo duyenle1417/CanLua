@@ -9,12 +9,15 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -28,8 +31,9 @@ public class HomeActivity extends AppCompatActivity
 
     FloatingActionButton btn_add_customer;
     RecyclerView recyclerView_customer;
+    TextView textView_notify_empty_customer;
     ArrayList<Customer> customerlist;
-    RecyclerView.Adapter adapter;
+    CustomerAdapter adapter;
     RecyclerView.LayoutManager layoutManager;
     SQLiteDatabase sqLiteDatabase;
     DrawerLayout drawerLayout;
@@ -81,7 +85,7 @@ public class HomeActivity extends AppCompatActivity
                     case 0:
                         dialog.setContentView(R.layout.dialog_info);
                         dialog.show();
-                        Button cancel = (Button) dialog.findViewById(R.id.btnCancel);
+                        Button cancel = dialog.findViewById(R.id.btnCancel);
                         cancel.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -93,7 +97,7 @@ public class HomeActivity extends AppCompatActivity
                     case 1:
                         dialog.setContentView(R.layout.dialog_introduce);
                         dialog.show();
-                        Button cancel1 = (Button) dialog.findViewById(R.id.btnCancel);
+                        Button cancel1 = dialog.findViewById(R.id.btnCancel);
                         cancel1.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -135,20 +139,43 @@ public class HomeActivity extends AppCompatActivity
         //ánh xạ view
         btn_add_customer = findViewById(R.id.btn_add_customer);
         recyclerView_customer = findViewById(R.id.recycleview_customer);
-        toolbar = (Toolbar) findViewById(R.id.toolbar_home);
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
-        navigationView = (NavigationView) findViewById(R.id.navigationView);
-        listView = (ListView) findViewById(R.id.navigationListview);
-        header = (ListView) findViewById(R.id.navigationHeader);
+        textView_notify_empty_customer = findViewById(R.id.home_notify_empty_recycleview);
+        toolbar = findViewById(R.id.toolbar_home);
+        drawerLayout = findViewById(R.id.drawerLayout);
+        navigationView = findViewById(R.id.navigationView);
+        listView = findViewById(R.id.navigationListview);
+        header = findViewById(R.id.navigationHeader);
         customerlist = new ArrayList<>();
 
         //adapter và layoutmanager cho recycleview
-        adapter = new CustomerAdapter(getApplicationContext(), customerlist, this);
-        recyclerView_customer.setAdapter(adapter);
+        adapter = new CustomerAdapter(this, customerlist, this);
         layoutManager = new LinearLayoutManager(this);
+
+        //adapter = new HomeAdapter(this, getAllItems(), this);
         recyclerView_customer.setLayoutManager(layoutManager);
+        recyclerView_customer.setAdapter(adapter);
+
+        //swipe item để xóa
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                delete((Integer) viewHolder.itemView.getTag());
+            }
+        }).attachToRecyclerView(recyclerView_customer);
+
 
         getCustomerAll();//lấy dữ liệu từ DB table customer
+        if (customerlist.isEmpty()) {
+            textView_notify_empty_customer.setVisibility(View.VISIBLE);
+        } else {
+            textView_notify_empty_customer.setVisibility(View.GONE);
+        }
     }
 
     //lấy dữ liệu từ DB vô ArrayList
@@ -165,6 +192,7 @@ public class HomeActivity extends AppCompatActivity
         if (cursor.moveToFirst()) {
             do {
                 Customer customer = new Customer();
+                customer.setID(Integer.parseInt(cursor.getString(cursor.getColumnIndex(DatabaseContract.CustomerTable._ID))));
                 customer.setHoTen(cursor.getString(cursor.getColumnIndex(DatabaseContract.CustomerTable.COLUMN_TENKH)));
                 customer.setSDT(cursor.getString(cursor.getColumnIndex(DatabaseContract.CustomerTable.COLUMN_SDT)));
                 customer.setDate(cursor.getString(cursor.getColumnIndex(DatabaseContract.CustomerTable.COLUMN_TIMESTAMP)));
@@ -179,18 +207,36 @@ public class HomeActivity extends AppCompatActivity
         cursor.close();
     }
 
+    //cardview clicked
     @Override
     public void OnItemClicked(int position) {
         Intent intent = new Intent(HomeActivity.this, HistoryActivity.class);
         intent.putExtra("name", customerlist.get(position).getHoTen());
         intent.putExtra("phone", customerlist.get(position).getSDT());
+        intent.putExtra("date", customerlist.get(position).getDate());
+        intent.putExtra("id", customerlist.get(position).getID());
         HomeActivity.this.startActivity(intent);
         HomeActivity.this.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
     }
 
     @Override
     public void ApplyChange(String name, String phone) {
+        //reset lại activity đồng thời lấy lại view mới
+        this.finish();
+        startActivity(getIntent());
+        HomeActivity.this.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
+    }
+
+    private void delete(Integer id) {
+        DatabaseHelper helper = new DatabaseHelper(this, DatabaseHelper.DATABASE_NAME, null, DatabaseHelper.DATABASE_VERSION);
+        SQLiteDatabase db = helper.getWritableDatabase();
+        db.delete(DatabaseContract.CustomerTable.TABLE_NAME,
+                DatabaseContract.CustomerTable._ID + "=" + id, null);
         getCustomerAll();
-        //adapter.notifyDataSetChanged();
+        if (customerlist.isEmpty()) {
+            textView_notify_empty_customer.setVisibility(View.VISIBLE);
+        } else {
+            textView_notify_empty_customer.setVisibility(View.GONE);
+        }
     }
 }

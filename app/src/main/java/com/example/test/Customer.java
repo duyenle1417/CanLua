@@ -2,6 +2,7 @@ package com.example.test;
 
 public class Customer {
     public String HoTen, SDT, date;
+    public int ID;
 
     public void setHoTen(String hoTen) {
         HoTen = hoTen;
@@ -25,5 +26,13 @@ public class Customer {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public int getID() {
+        return ID;
+    }
+
+    public void setID(int ID) {
+        this.ID = ID;
     }
 }

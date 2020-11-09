@@ -1,24 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <TextView
         android:id="@+id/tvCanLua"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Cân lúa"
         android:textColor="@color/editTextBG_Color2"
         android:textSize="30dp"
-        android:textStyle="italic"/>
+        android:textStyle="italic" />
 
     <TextView
-        android:layout_marginLeft="10dp"
         android:id="@+id/tvVersion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:text="verion"
         android:textColor="@color/editTextBG_Color2"
-        android:textSize="10sp"/>
+        android:textSize="10sp" />
 
 </LinearLayout>

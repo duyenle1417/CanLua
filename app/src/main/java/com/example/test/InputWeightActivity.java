@@ -1,6 +1,8 @@
 package com.example.test;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -14,6 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,7 +27,6 @@ import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -37,26 +39,32 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InputWeightActivity extends AppCompatActivity
-                                implements EditWeightDialog.EditWeightDialogListener {
-    private static final String FILE_NAME = "Weights.txt";
-
+        implements EditWeightDialog.EditWeightDialogListener {
     GridView gridView_weight;
     EditText editText_weight;
     TextView textView_weight_preview;
     Button button_add_weight;
     TextView textView_info_sumOfBag;
-    TextView getTextView_info_sumOfWeight;
+    TextView textView_info_sumOfWeight;
     @SerializedName("weights")
     List<Double> listWeight;
     GridViewWeightAdapter adapter;
     int sumOfBag = 0;
     double sumOfWeight = 0;
+    String FILE_NAME, name, datejoin, dateCreate;
     Gson gson = new Gson();
+    SQLiteDatabase sqLiteDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.input_weight_layout);
+        Intent intent = getIntent();
+        name = intent.getStringExtra("name");
+        datejoin = intent.getStringExtra("datejoin");
+        dateCreate = intent.getStringExtra("dateCreate");
+        dateCreate.replace(" ", "-");
+        FILE_NAME = dateCreate + ".txt";
 
         getView();
         listWeight = new ArrayList<>();//khởi tạo mảng
@@ -124,11 +132,11 @@ public class InputWeightActivity extends AppCompatActivity
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Bundle bundle = new Bundle();
-                String weightSet= position + "#" + listWeight.get(position);
+                String weightSet = position + "#" + listWeight.get(position);
                 bundle.putString("weight", weightSet);
                 EditWeightDialog dialog = new EditWeightDialog();
                 dialog.setArguments(bundle);
-                dialog.show(getSupportFragmentManager(),"dialog edit weight data");
+                dialog.show(getSupportFragmentManager(), "dialog edit weight data");
             }
         });
 
@@ -137,7 +145,7 @@ public class InputWeightActivity extends AppCompatActivity
     }
 
     private void ReadJSONFile() {
-        FileInputStream fileInputStream =null;
+        FileInputStream fileInputStream;
         try {
             fileInputStream = openFileInput(FILE_NAME);
             InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream);
@@ -145,7 +153,8 @@ public class InputWeightActivity extends AppCompatActivity
             String text;
             text = br.readLine();
 
-            Type type = new TypeToken<ArrayList<Double>>(){}.getType();
+            Type type = new TypeToken<ArrayList<Double>>() {
+            }.getType();
             listWeight = gson.fromJson(text, type);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -156,8 +165,8 @@ public class InputWeightActivity extends AppCompatActivity
     }
 
     private void SaveJSONFile() {
-        String text = gson.toJson(listWeight);
-        FileOutputStream fileOutputStream =  null;
+        String text = gson.toJson(listWeight);//chỉ lưu cân kg
+        FileOutputStream fileOutputStream = null;
 
         try {
             fileOutputStream = openFileOutput(FILE_NAME, MODE_PRIVATE);
@@ -167,7 +176,7 @@ public class InputWeightActivity extends AppCompatActivity
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            if(fileOutputStream !=null){
+            if (fileOutputStream != null) {
                 try {
                     fileOutputStream.close();
                 } catch (IOException e) {
@@ -200,8 +209,8 @@ public class InputWeightActivity extends AppCompatActivity
 
     //lấy số bao = list.size
     private void AddNumOfBag() {
-        sumOfBag = listWeight.size();
-        textView_info_sumOfBag.setText(sumOfBag + " BAO");
+        sumOfBag = Math.max(listWeight.size(), 0);
+        textView_info_sumOfBag.setText("" + sumOfBag);
     }
 
     //lấy weight trong mảng cộng lại
@@ -209,14 +218,14 @@ public class InputWeightActivity extends AppCompatActivity
         sumOfWeight = 0;
         if (listWeight.size() != 0) {
             for (int i = 0; i < listWeight.size(); i++) {
-                sumOfWeight += (double) listWeight.get(i);
+                sumOfWeight += listWeight.get(i);
             }
         }
         //làm tròn vì double có lỗi hiển thị => kết quả đúng
         DecimalFormat decimalFormat = new DecimalFormat("0.0");
         decimalFormat.setRoundingMode(RoundingMode.UP);
 
-        getTextView_info_sumOfWeight.setText(decimalFormat.format(sumOfWeight) + " KG");
+        textView_info_sumOfWeight.setText(decimalFormat.format(sumOfWeight));
     }
 
     //lấy các view findViewById()
@@ -226,7 +235,7 @@ public class InputWeightActivity extends AppCompatActivity
         textView_weight_preview = findViewById(R.id.textView_input_weight_preview);
         button_add_weight = findViewById(R.id.btn_input_weight);
         textView_info_sumOfBag = findViewById(R.id.info_lb_sum_bag);
-        getTextView_info_sumOfWeight = findViewById(R.id.info_lb_sum_weight);
+        textView_info_sumOfWeight = findViewById(R.id.info_lb_sum_weight);
 
         //toolbar
         Toolbar toolbar = findViewById(R.id.input_weight_toolbar);
@@ -237,20 +246,49 @@ public class InputWeightActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
                 return true;
             case R.id.OK:
+                /*
                 File dir = getFilesDir();
                 File file = new File(dir, FILE_NAME);
                 file.delete();
+                 */
+                updateHistory();
                 Intent intent = new Intent(InputWeightActivity.this, PreviewActivity.class);
-                //InputWeightActivity.this.finish();
+                intent.putExtra("dateJoin", datejoin);
+                intent.putExtra("dateCreate", dateCreate);
                 InputWeightActivity.this.startActivity(intent);
         }
-
         return super.onOptionsItemSelected(item);
+    }
+
+    private void updateHistory() {
+        DatabaseHelper helper = new DatabaseHelper(this, DatabaseHelper.DATABASE_NAME, null, DatabaseHelper.DATABASE_VERSION);
+        sqLiteDatabase = helper.getWritableDatabase();
+
+        ContentValues cv = new ContentValues();
+        String tongBao, tongKG;
+        tongBao = textView_info_sumOfBag.getText().toString();
+        tongKG = textView_info_sumOfWeight.getText().toString();
+        cv.put(DatabaseContract.HistoryTable.COLUMN_TONGBAO, tongBao);
+        cv.put(DatabaseContract.HistoryTable.COLUMN_TONGKG, tongKG);
+
+        String UPDATE_HISTORY = "UPDATE " + DatabaseContract.HistoryTable.TABLE_NAME +
+                " SET " + DatabaseContract.HistoryTable.COLUMN_TONGBAO + " = " + tongBao +
+                ", " + DatabaseContract.HistoryTable.COLUMN_TONGKG + " = " + tongKG +
+                " WHERE " + DatabaseContract.HistoryTable.COLUMN_TIMESTAMP + " LIKE '%" + dateCreate + "%'" +
+                " AND " + DatabaseContract.HistoryTable.COLUMN_DATEJOIN + " LIKE '%" + datejoin + "%';";
+        sqLiteDatabase.execSQL(UPDATE_HISTORY);
+/*
+        sqLiteDatabase.update(DatabaseContract.HistoryTable.TABLE_NAME,cv,
+                DatabaseContract.HistoryTable.COLUMN_TENKH + "=" + name +
+                        " AND " + DatabaseContract.HistoryTable.COLUMN_TIMESTAMP + " LIKE '%" + dateCreate + "%'" +
+                        " AND " + DatabaseContract.HistoryTable.COLUMN_DATEJOIN + " LIKE '%" + datejoin + "%'",null);
+ */
+        Toast.makeText(this, "updated", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -265,16 +303,18 @@ public class InputWeightActivity extends AppCompatActivity
     private String AddFloatingPoint(String input) {
         if (input.length() == 3) {//35.5 hay 35.0
             return input.substring(0, 2) + '.' + input.substring(2);
-        }else
+        } else
             return input + ".0";
     }
 
+    //cập nhật số ký đã sửa
     @Override
     public void ApplyChange(String position, String weight) {
-        listWeight.set(Integer.parseInt(position),Double.parseDouble(weight));
+        listWeight.set(Integer.parseInt(position), Double.parseDouble(weight));
         adapter.notifyDataSetChanged();
         //tính lại tổng số cân nặng
         AddWeight();
         SaveJSONFile();
+        updateHistory();//cập nhật DB số bao và tổng kg lúa
     }
 }
