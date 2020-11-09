@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,8 +29,10 @@ public class PreviewActivity extends AppCompatActivity {
         Intent intent = getIntent();
         dateJoin = intent.getStringExtra("dateJoin");
         dateCreate = intent.getStringExtra("dateCreate");
+        Toast.makeText(this, dateCreate, Toast.LENGTH_SHORT).show();
 
         getView();
+
     }
 
     private void getView() {
@@ -44,7 +47,7 @@ public class PreviewActivity extends AppCompatActivity {
         textView_thanhtien = findViewById(R.id.textView_info_thanhtien);
         history = new History();
         getHistory();
-
+/*
         editText_tenKH.setText(history.getHoTen());
         editText_sdt.setText(history.getSDT());
         editText_tenLua.setText(history.getTenGiongLua());
@@ -54,6 +57,8 @@ public class PreviewActivity extends AppCompatActivity {
         textView_tongbao.setText("" + history.getSoBao());
         textView_tongkg.setText(String.format("%s", history.getTongSoKG()));
         textView_thanhtien.setText("" + history.getThanhTien());
+
+ */
     }
 
     private void getHistory() {
@@ -83,8 +88,9 @@ public class PreviewActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        //super.onBackPressed();
         Intent intent = new Intent(PreviewActivity.this, HistoryActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("name", editText_tenKH.getText());
         intent.putExtra("phone", editText_sdt.getText());
         intent.putExtra("id", history.getID());

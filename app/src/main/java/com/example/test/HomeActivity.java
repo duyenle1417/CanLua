@@ -214,7 +214,6 @@ public class HomeActivity extends AppCompatActivity
         intent.putExtra("name", customerlist.get(position).getHoTen());
         intent.putExtra("phone", customerlist.get(position).getSDT());
         intent.putExtra("date", customerlist.get(position).getDate());
-        intent.putExtra("id", customerlist.get(position).getID());
         HomeActivity.this.startActivity(intent);
         HomeActivity.this.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
     }

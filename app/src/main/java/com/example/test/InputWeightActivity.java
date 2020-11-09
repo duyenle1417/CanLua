@@ -16,14 +16,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.google.gson.Gson;
-import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedReader;
@@ -46,12 +44,11 @@ public class InputWeightActivity extends AppCompatActivity
     Button button_add_weight;
     TextView textView_info_sumOfBag;
     TextView textView_info_sumOfWeight;
-    @SerializedName("weights")
     List<Double> listWeight;
     GridViewWeightAdapter adapter;
     int sumOfBag = 0;
     double sumOfWeight = 0;
-    String FILE_NAME, name, datejoin, dateCreate;
+    String FILE_NAME, name, phone, datejoin, dateCreate;
     Gson gson = new Gson();
     SQLiteDatabase sqLiteDatabase;
 
@@ -61,10 +58,12 @@ public class InputWeightActivity extends AppCompatActivity
         setContentView(R.layout.input_weight_layout);
         Intent intent = getIntent();
         name = intent.getStringExtra("name");
+        phone = intent.getStringExtra("phone");
         datejoin = intent.getStringExtra("datejoin");
         dateCreate = intent.getStringExtra("dateCreate");
         dateCreate.replace(" ", "-");
         FILE_NAME = dateCreate + ".txt";
+
 
         getView();
         listWeight = new ArrayList<>();//khởi tạo mảng
@@ -123,6 +122,7 @@ public class InputWeightActivity extends AppCompatActivity
                     AddWeight();
                     AddNumOfBag();
                     SaveJSONFile();
+                    updateHistory();
                 }
             }
         });
@@ -241,26 +241,24 @@ public class InputWeightActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.input_weight_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
         //getSupportActionBar().setTitle("");
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        Intent intent;
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
                 return true;
             case R.id.OK:
-                /*
-                File dir = getFilesDir();
-                File file = new File(dir, FILE_NAME);
-                file.delete();
-                 */
-                updateHistory();
-                Intent intent = new Intent(InputWeightActivity.this, PreviewActivity.class);
+                intent = new Intent(InputWeightActivity.this, PreviewActivity.class);
                 intent.putExtra("dateJoin", datejoin);
                 intent.putExtra("dateCreate", dateCreate);
                 InputWeightActivity.this.startActivity(intent);
+                InputWeightActivity.this.finish();
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -282,13 +280,6 @@ public class InputWeightActivity extends AppCompatActivity
                 " WHERE " + DatabaseContract.HistoryTable.COLUMN_TIMESTAMP + " LIKE '%" + dateCreate + "%'" +
                 " AND " + DatabaseContract.HistoryTable.COLUMN_DATEJOIN + " LIKE '%" + datejoin + "%';";
         sqLiteDatabase.execSQL(UPDATE_HISTORY);
-/*
-        sqLiteDatabase.update(DatabaseContract.HistoryTable.TABLE_NAME,cv,
-                DatabaseContract.HistoryTable.COLUMN_TENKH + "=" + name +
-                        " AND " + DatabaseContract.HistoryTable.COLUMN_TIMESTAMP + " LIKE '%" + dateCreate + "%'" +
-                        " AND " + DatabaseContract.HistoryTable.COLUMN_DATEJOIN + " LIKE '%" + datejoin + "%'",null);
- */
-        Toast.makeText(this, "updated", Toast.LENGTH_SHORT).show();
     }
 
     @Override

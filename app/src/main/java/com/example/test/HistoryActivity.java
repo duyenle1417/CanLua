@@ -30,7 +30,7 @@ public class HistoryActivity extends AppCompatActivity {
     RecyclerView.Adapter adapter;
     RecyclerView.LayoutManager layoutManager;
     SQLiteDatabase sqLiteDatabase;
-    String name, phone, datejoin, id;
+    String name, phone, datejoin;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -40,7 +40,6 @@ public class HistoryActivity extends AppCompatActivity {
         name = intent.getStringExtra("name");
         phone = intent.getStringExtra("phone");
         datejoin = intent.getStringExtra("date");
-        id = intent.getStringExtra("id");//để xóa
         getView();
 
         //chuyển sang layout nhập thông tin cân lúa
@@ -51,10 +50,9 @@ public class HistoryActivity extends AppCompatActivity {
                 intent.putExtra("name", name);
                 intent.putExtra("phone", phone);
                 intent.putExtra("datejoin", datejoin);
-                HistoryActivity.this.startActivity(intent);
                 HistoryActivity.this.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
                 HistoryActivity.this.startActivity(intent);
-                HistoryActivity.this.finish();
+                //HistoryActivity.this.finish();
             }
         });
     }
@@ -162,7 +160,6 @@ public class HistoryActivity extends AppCompatActivity {
                 onBackPressed();
                 return true;
         }
-
-        return super.onOptionsItemSelected(item);
+        return false;
     }
 }

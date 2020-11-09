@@ -70,9 +70,11 @@ public class InputCustomerInfoActivity extends AppCompatActivity {
                 Intent intent = new Intent(InputCustomerInfoActivity.this, InputWeightActivity.class);
                 //id để update DB
                 intent.putExtra("name", name);
+                intent.putExtra("phone", phone);
                 intent.putExtra("datejoin", datejoin);
                 intent.putExtra("dateCreate", dateCreate);//tên file json
                 InputCustomerInfoActivity.this.startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
                 return true;
         }
 

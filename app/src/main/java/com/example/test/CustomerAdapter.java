@@ -49,6 +49,7 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.Custom
 
         holder.textView_name.setText(customer.getHoTen());
         holder.textView_phone.setText(customer.getSDT());
+        holder.textView_date.setText(customer.getDate());
         holder.ic_more_menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -65,9 +66,10 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.Custom
                                 Intent intent = new Intent(context, HistoryActivity.class);
                                 intent.putExtra("name", list.get(position).getHoTen());
                                 intent.putExtra("phone", list.get(position).getSDT());
-                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                intent.putExtra("date", list.get(position).getDate());
+                                intent.putExtra("id", list.get(position).getID());
                                 context.startActivity(intent);
-                                //HomeActivity.this.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
+                                ((HomeActivity) context).overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
                                 return true;
                             case R.id.menuEdit:
                                 break;
@@ -115,6 +117,7 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.Custom
     public static class CustomerViewHolder extends RecyclerView.ViewHolder {
         public TextView textView_name;
         public TextView textView_phone;
+        public TextView textView_date;
         public ImageView ic_more_menu;
         CardView cardView;
 
@@ -122,6 +125,7 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.Custom
             super(itemView);
             textView_name = itemView.findViewById(R.id.home_item_name_tv);
             textView_phone = itemView.findViewById(R.id.home_item_phone_tv);
+            textView_date = itemView.findViewById(R.id.home_item_date);
             ic_more_menu = itemView.findViewById(R.id.ic_more_menu);
             cardView = itemView.findViewById(R.id.home_item_card);
 

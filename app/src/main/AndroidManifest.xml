@@ -12,6 +12,7 @@
         <activity
             android:name=".HomeActivity"
             android:configChanges="screenLayout|screenSize|orientation"
+            android:launchMode="singleTask"
             android:windowSoftInputMode="stateAlwaysHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,6 +23,7 @@
         <activity
             android:name=".HistoryActivity"
             android:configChanges="screenLayout|screenSize|orientation"
+            android:launchMode="singleTask"
             android:windowSoftInputMode="stateAlwaysHidden">
 
         </activity>
