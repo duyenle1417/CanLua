@@ -24,6 +24,7 @@ public class InputCustomerInfoActivity extends AppCompatActivity {
     EditText editText_tiencoc;
     String name, phone, dateCreate, datejoin;
     SQLiteDatabase sqLiteDatabase;
+    int dongia, trubi;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -36,7 +37,6 @@ public class InputCustomerInfoActivity extends AppCompatActivity {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         dateCreate = dateFormat.format(Calendar.getInstance().getTime());//time lấy khi mở layout nhập cân lúa
         getView();
-
     }
 
     private void getView() {
@@ -49,6 +49,11 @@ public class InputCustomerInfoActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.info_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        //set giá trị sẵn
+        editText_dongia.setText("5000");
+        editText_trubi.setText("8");
+        editText_tiencoc.setText("0");
     }
 
     @Override
@@ -61,21 +66,26 @@ public class InputCustomerInfoActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        Intent intent;
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
                 return true;
             case R.id.OK:
                 AddHistory();//vô DB
-                Intent intent = new Intent(InputCustomerInfoActivity.this, InputWeightActivity.class);
+                intent = new Intent(InputCustomerInfoActivity.this, InputWeightActivity.class);
                 //id để update DB
+                dongia = Integer.parseInt(editText_dongia.getText().toString());
+                trubi = Integer.parseInt(editText_trubi.getText().toString());
                 intent.putExtra("name", name);
                 intent.putExtra("phone", phone);
                 intent.putExtra("datejoin", datejoin);
                 intent.putExtra("dateCreate", dateCreate);//tên file json
+                intent.putExtra("dongia", dongia);
+                intent.putExtra("trubi", trubi);
                 InputCustomerInfoActivity.this.startActivity(intent);
                 overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
-                return true;
+                this.finish();
         }
 
         return super.onOptionsItemSelected(item);
@@ -83,13 +93,15 @@ public class InputCustomerInfoActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
         Intent intent = new Intent(InputCustomerInfoActivity.this, HistoryActivity.class);
         intent.putExtra("name", name);
+        intent.putExtra("date", datejoin);
+        intent.putExtra("reload", "yes");
         intent.putExtra("phone", phone);
         InputCustomerInfoActivity.this.startActivity(intent);
         InputCustomerInfoActivity.this.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
         InputCustomerInfoActivity.this.startActivity(intent);
+        this.finish();
     }
 
     private void AddHistory() {

@@ -29,7 +29,7 @@
         android:background="@drawable/edit_text_bg"
         android:hint="Tên"
         android:inputType="textPersonName"
-        android:nextFocusDown="@id/edittext_sdt"
+        android:nextFocusDown="@id/edittext_sdt_dialog"
         android:singleLine="true"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"

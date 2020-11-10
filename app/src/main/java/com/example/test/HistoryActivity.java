@@ -30,7 +30,7 @@ public class HistoryActivity extends AppCompatActivity {
     RecyclerView.Adapter adapter;
     RecyclerView.LayoutManager layoutManager;
     SQLiteDatabase sqLiteDatabase;
-    String name, phone, datejoin;
+    String name, phone, datejoin, reload;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -40,6 +40,7 @@ public class HistoryActivity extends AppCompatActivity {
         name = intent.getStringExtra("name");
         phone = intent.getStringExtra("phone");
         datejoin = intent.getStringExtra("date");
+        reload = intent.getStringExtra("reload");
         getView();
 
         //chuyển sang layout nhập thông tin cân lúa
@@ -50,11 +51,19 @@ public class HistoryActivity extends AppCompatActivity {
                 intent.putExtra("name", name);
                 intent.putExtra("phone", phone);
                 intent.putExtra("datejoin", datejoin);
-                HistoryActivity.this.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
                 HistoryActivity.this.startActivity(intent);
-                //HistoryActivity.this.finish();
+                HistoryActivity.this.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
+                HistoryActivity.this.finish();
             }
         });
+
+        //recreate acitivity
+        if (reload == "yes") {
+            this.finish();
+            this.overridePendingTransition(0, 0);
+            startActivity(getIntent());
+            this.overridePendingTransition(0, 0);
+        }
     }
 
     private void getView() {

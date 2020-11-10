@@ -17,6 +17,8 @@ import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder> {
@@ -40,20 +42,23 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
     public void onBindViewHolder(@NonNull final HistoryViewHolder holder, final int position) {
         History customer = list.get(position);
 
+        DecimalFormat decimalFormat = new DecimalFormat("###,###,###,###");
+        decimalFormat.setRoundingMode(RoundingMode.UP);
+
         holder.textView_tengiong.setText(customer.getTenGiongLua());
-        holder.textView_dongia.setText("" + customer.getDonGia());
+        holder.textView_dongia.setText(decimalFormat.format(customer.getDonGia()));
         holder.textView_trubi.setText("" + customer.getBaoBi());
         holder.textView_sobao.setText("" + customer.getSoBao());
         holder.textView_sokg.setText("" + customer.getTongSoKG());
-        holder.textView_tiencoc.setText("" + customer.getTienCoc());
-        holder.textView_thanhtien.setText("" + customer.getThanhTien());
+        holder.textView_tiencoc.setText(decimalFormat.format(customer.getTienCoc()));
+        holder.textView_thanhtien.setText(decimalFormat.format(customer.getThanhTien()));
         holder.textView_date.setText(customer.getTimestamp());
 
         holder.ic_more_menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 PopupMenu popup = new PopupMenu(context, holder.ic_more_menu);
-                popup.getMenuInflater().inflate(R.menu.pop_up, popup.getMenu());
+                popup.getMenuInflater().inflate(R.menu.pop_up_history, popup.getMenu());
                 popup.show();
 
                 popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -61,16 +66,15 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
                     public boolean onMenuItemClick(MenuItem item) {
                         //Toast.makeText(context, "" + item.getTitle(), Toast.LENGTH_SHORT).show();
                         switch (item.getItemId()) {
-                            case R.id.menuView:
-                                Intent intent = new Intent(context, HistoryActivity.class);
+                            case R.id.menuEdit:
+                                Intent intent = new Intent(context, PreviewActivity.class);
+                                intent.putExtra("dateJoin", list.get(position).getDateJoin());
+                                intent.putExtra("dateCreate", list.get(position).getTimestamp());
                                 intent.putExtra("name", list.get(position).getHoTen());
                                 intent.putExtra("phone", list.get(position).getSDT());
-                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 context.startActivity(intent);
-                                //HomeActivity.this.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
+                                ((HistoryActivity) context).overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
                                 return true;
-                            case R.id.menuEdit:
-                                break;
                             case R.id.menuDel:
                                 deleteData(position);
                                 Log.e("delete TEST", "item ######");
@@ -81,7 +85,6 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
                             default:
                                 throw new IllegalStateException("Unexpected value: " + item.getItemId());
                         }
-                        return true;
                     }
                 });
             }
@@ -102,6 +105,8 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
                 holder.ic_more.setVisibility(View.VISIBLE);
             }
         });
+
+        holder.itemView.setTag(list.get(position).getID());
     }
 
     @Override

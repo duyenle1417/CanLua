@@ -6,20 +6,21 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+
 public class PreviewActivity extends AppCompatActivity {
-    String dateJoin, dateCreate;
-    EditText
-            editText_tenKH, editText_sdt, editText_tenLua,
-            editText_dongia, editText_trubi, editText_tiencoc;
+    String dateJoin, dateCreate, name, phone;
+    EditText editText_tenLua, editText_dongia, editText_trubi, editText_tiencoc;
     TextView textView_tongbao, textView_tongkg, textView_thanhtien;
 
     History history;
     SQLiteDatabase sqLiteDatabase;
+    int dongia, trubi;
 
     @Override
 
@@ -29,15 +30,14 @@ public class PreviewActivity extends AppCompatActivity {
         Intent intent = getIntent();
         dateJoin = intent.getStringExtra("dateJoin");
         dateCreate = intent.getStringExtra("dateCreate");
-        Toast.makeText(this, dateCreate, Toast.LENGTH_SHORT).show();
-
+        name = intent.getStringExtra("name");
+        phone = intent.getStringExtra("phone");
         getView();
-
+        dongia = Integer.parseInt(editText_dongia.getText().toString());
+        trubi = Integer.parseInt(editText_trubi.getText().toString());
     }
 
     private void getView() {
-        editText_tenKH = findViewById(R.id.edittext_tenKH);
-        editText_sdt = findViewById(R.id.edittext_sdt);
         editText_dongia = findViewById(R.id.edittext_dongia);
         editText_tenLua = findViewById(R.id.edittext_tenLua);
         editText_trubi = findViewById(R.id.edittext_trubi);
@@ -47,18 +47,18 @@ public class PreviewActivity extends AppCompatActivity {
         textView_thanhtien = findViewById(R.id.textView_info_thanhtien);
         history = new History();
         getHistory();
-/*
-        editText_tenKH.setText(history.getHoTen());
-        editText_sdt.setText(history.getSDT());
-        editText_tenLua.setText(history.getTenGiongLua());
-        editText_dongia.setText("" + history.getDonGia());
-        editText_trubi.setText("" + history.getBaoBi());
-        editText_tiencoc.setText("" + history.getTienCoc());
-        textView_tongbao.setText("" + history.getSoBao());
-        textView_tongkg.setText(String.format("%s", history.getTongSoKG()));
-        textView_thanhtien.setText("" + history.getThanhTien());
+    }
 
- */
+    private void AddMoney() {
+        int sumOfBag = Integer.parseInt(textView_tongbao.getText().toString());
+        int sumOfWeight = Integer.parseInt(textView_tongkg.getText().toString());
+
+        double money = dongia * (sumOfWeight - ((1.0 / trubi) * sumOfBag));
+
+        //làm tròn vì double có lỗi hiển thị => kết quả đúng
+        DecimalFormat decimalFormat = new DecimalFormat("###,###,###,###");
+        decimalFormat.setRoundingMode(RoundingMode.UP);
+        textView_thanhtien.setText(decimalFormat.format(money));
     }
 
     private void getHistory() {
@@ -70,32 +70,60 @@ public class PreviewActivity extends AppCompatActivity {
                 " AND " + DatabaseContract.HistoryTable.COLUMN_TIMESTAMP + " LIKE '%" + dateCreate + "%';";
         Cursor cursor = sqLiteDatabase.rawQuery(GET_DATA, null);
 
-        history.setID(cursor.getInt(cursor.getColumnIndex(DatabaseContract.HistoryTable._ID)));
-        history.setHoTen(cursor.getString(cursor.getColumnIndex(DatabaseContract.HistoryTable.COLUMN_TENKH)));
-        history.setSDT(cursor.getString(cursor.getColumnIndex(DatabaseContract.HistoryTable.COLUMN_SDT)));
-        history.setTenGiongLua(cursor.getString(cursor.getColumnIndex(DatabaseContract.HistoryTable.COLUMN_TENGIONG)));
-        history.setDonGia(cursor.getInt(cursor.getColumnIndex(DatabaseContract.HistoryTable.COLUMN_DONGIA)));
-        history.setBaoBi(cursor.getInt(cursor.getColumnIndex(DatabaseContract.HistoryTable.COLUMN_BAOBI)));
-        history.setSoBao(cursor.getInt(cursor.getColumnIndex(DatabaseContract.HistoryTable.COLUMN_TONGBAO)));
-        history.setTongSoKG(cursor.getDouble(cursor.getColumnIndex(DatabaseContract.HistoryTable.COLUMN_TONGKG)));
-        history.setTienCoc(cursor.getInt(cursor.getColumnIndex(DatabaseContract.HistoryTable.COLUMN_TIENCOC)));
-        history.setThanhTien(cursor.getInt(cursor.getColumnIndex(DatabaseContract.HistoryTable.COLUMN_THANHTIEN)));
-        history.setTimestamp(cursor.getString(cursor.getColumnIndex(DatabaseContract.HistoryTable.COLUMN_TIMESTAMP)));
-        history.setDateJoin(cursor.getString(cursor.getColumnIndex(DatabaseContract.HistoryTable.COLUMN_DATEJOIN)));
+        if (cursor.moveToFirst() && cursor.getCount() >= 1) {
+            history.setID(cursor.getInt(cursor.getColumnIndex(DatabaseContract.HistoryTable._ID)));
+            history.setHoTen(cursor.getString(cursor.getColumnIndex(DatabaseContract.HistoryTable.COLUMN_TENKH)));
+            history.setSDT(cursor.getString(cursor.getColumnIndex(DatabaseContract.HistoryTable.COLUMN_SDT)));
+            history.setTenGiongLua(cursor.getString(cursor.getColumnIndex(DatabaseContract.HistoryTable.COLUMN_TENGIONG)));
+            history.setDonGia(cursor.getInt(cursor.getColumnIndex(DatabaseContract.HistoryTable.COLUMN_DONGIA)));
+            history.setBaoBi(cursor.getInt(cursor.getColumnIndex(DatabaseContract.HistoryTable.COLUMN_BAOBI)));
+            history.setSoBao(cursor.getInt(cursor.getColumnIndex(DatabaseContract.HistoryTable.COLUMN_TONGBAO)));
+            history.setTongSoKG(cursor.getDouble(cursor.getColumnIndex(DatabaseContract.HistoryTable.COLUMN_TONGKG)));
+            history.setTienCoc(cursor.getInt(cursor.getColumnIndex(DatabaseContract.HistoryTable.COLUMN_TIENCOC)));
+            history.setThanhTien(cursor.getInt(cursor.getColumnIndex(DatabaseContract.HistoryTable.COLUMN_THANHTIEN)));
+            history.setTimestamp(cursor.getString(cursor.getColumnIndex(DatabaseContract.HistoryTable.COLUMN_TIMESTAMP)));
+            history.setDateJoin(cursor.getString(cursor.getColumnIndex(DatabaseContract.HistoryTable.COLUMN_DATEJOIN)));
+
+            editText_tenLua.setText(history.getTenGiongLua());
+            editText_dongia.setText("" + history.getDonGia());
+            editText_trubi.setText("" + history.getBaoBi());
+            editText_tiencoc.setText("" + history.getTienCoc());
+            textView_tongbao.setText("" + history.getSoBao());
+            textView_tongkg.setText(String.format("%s", history.getTongSoKG()));
+            textView_thanhtien.setText("" + history.getThanhTien());
+        }
 
         cursor.close();
     }
 
+    private void updateHistory() {
+        DatabaseHelper helper = new DatabaseHelper(this, DatabaseHelper.DATABASE_NAME, null, DatabaseHelper.DATABASE_VERSION);
+        sqLiteDatabase = helper.getWritableDatabase();
+
+        String UPDATE_HISTORY = "UPDATE " + DatabaseContract.HistoryTable.TABLE_NAME +
+                " SET " + DatabaseContract.HistoryTable.COLUMN_TENGIONG + " = " + editText_tenLua.getText().toString() +
+                ", " + DatabaseContract.HistoryTable.COLUMN_DONGIA + " = " + editText_dongia.getText().toString() +
+                ", " + DatabaseContract.HistoryTable.COLUMN_BAOBI + " = " + editText_trubi.getText().toString() +
+                ", " + DatabaseContract.HistoryTable.COLUMN_TIENCOC + " = " + editText_tiencoc.getText().toString() +
+                ", " + DatabaseContract.HistoryTable.COLUMN_TONGBAO + " = " + textView_tongbao.getText().toString() +
+                ", " + DatabaseContract.HistoryTable.COLUMN_TONGKG + " = " + textView_tongkg.getText().toString() +
+                ", " + DatabaseContract.HistoryTable.COLUMN_THANHTIEN + " = " + textView_thanhtien.getText().toString() +
+                " WHERE " + DatabaseContract.HistoryTable.COLUMN_TIMESTAMP + " LIKE '%" + dateCreate + "%'" +
+                " AND " + DatabaseContract.HistoryTable.COLUMN_DATEJOIN + " LIKE '%" + dateJoin + "%';";
+        sqLiteDatabase.execSQL(UPDATE_HISTORY);
+    }
+
     @Override
     public void onBackPressed() {
-        //super.onBackPressed();
+        updateHistory();
         Intent intent = new Intent(PreviewActivity.this, HistoryActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra("name", editText_tenKH.getText());
-        intent.putExtra("phone", editText_sdt.getText());
-        intent.putExtra("id", history.getID());
-        intent.putExtra("date", history.getDateJoin());
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra("name", name);
+        intent.putExtra("phone", phone);
+        intent.putExtra("date", dateJoin);
+        intent.putExtra("reload", "yes");
         PreviewActivity.this.startActivity(intent);
+        PreviewActivity.this.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
         PreviewActivity.this.finish();
     }
 }

@@ -30,80 +30,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <!--Phần tên khách hàng-->
-            <TextView
-                android:id="@+id/textView_tenKH"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="24dp"
-                android:inputType="text|textPersonName"
-                android:text="Tên khách hàng"
-                style="@style/TextViewLabel"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <EditText
-                android:id="@+id/edittext_tenKH"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginRight="16dp"
-                android:background="@drawable/edit_text_bg"
-                android:textSize="24sp"
-                android:singleLine="true"
-                android:nextFocusDown="@id/edittext_sdt"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView_tenKH" />
-
-            <!--Phần SĐT khách hàng-->
-            <TextView
-                android:id="@+id/textView_sdt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="24dp"
-                android:text="SĐT"
-                style="@style/TextViewLabel"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/edittext_tenKH" />
-
-            <EditText
-                android:id="@+id/edittext_sdt"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginRight="16dp"
-                android:background="@drawable/edit_text_bg"
-                android:inputType="phone"
-                android:textSize="24sp"
-                android:singleLine="true"
-                android:nextFocusDown="@id/edittext_tenLua"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView_sdt" />
-
             <!--Phần tên giống lúa-->
             <TextView
                 android:id="@+id/textView_tenLua"
+                style="@style/TextViewLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="24dp"
                 android:text="Tên giống lúa"
-                style="@style/TextViewLabel"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/edittext_sdt" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <EditText
                 android:id="@+id/edittext_tenLua"
@@ -116,9 +54,10 @@
                 android:layout_marginRight="16dp"
                 android:background="@drawable/edit_text_bg"
                 android:inputType="text|textPersonName"
-                android:textSize="24sp"
-                android:singleLine="true"
                 android:nextFocusDown="@id/edittext_dongia"
+                android:selectAllOnFocus="true"
+                android:singleLine="true"
+                android:textSize="24sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView_tenLua" />
@@ -126,13 +65,13 @@
             <!--Phần đơn giá lúa/kg-->
             <TextView
                 android:id="@+id/textView_dongia"
+                style="@style/TextViewLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="24dp"
                 android:text="Đơn giá"
-                style="@style/TextViewLabel"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/edittext_tenLua" />
 
@@ -145,9 +84,10 @@
                 android:layout_marginTop="8dp"
                 android:background="@drawable/edit_text_bg_2"
                 android:inputType="number"
-                android:textSize="24sp"
-                android:singleLine="true"
                 android:nextFocusDown="@id/edittext_trubi"
+                android:selectAllOnFocus="true"
+                android:singleLine="true"
+                android:textSize="24sp"
                 app:layout_constraintEnd_toStartOf="@+id/textView_dongia_extra"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView_dongia" />
@@ -171,13 +111,13 @@
             <!--Phần trừ bì-->
             <TextView
                 android:id="@+id/textView_trubi"
+                style="@style/TextViewLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="24dp"
                 android:text="Trừ bì"
-                style="@style/TextViewLabel"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/edittext_dongia" />
 
@@ -190,9 +130,10 @@
                 android:layout_marginTop="8dp"
                 android:background="@drawable/edit_text_bg_2"
                 android:inputType="number"
-                android:textSize="24sp"
-                android:singleLine="true"
                 android:nextFocusDown="@id/edittext_tiencoc"
+                android:selectAllOnFocus="true"
+                android:singleLine="true"
+                android:textSize="24sp"
                 app:layout_constraintEnd_toStartOf="@+id/textView_trubi_extra"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView_trubi" />
@@ -216,13 +157,13 @@
             <!--Phần tổng số bao lúa-->
             <TextView
                 android:id="@+id/textView_tongbaolua"
+                style="@style/TextViewLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="24dp"
                 android:text="Tổng bao lúa"
-                style="@style/TextViewLabel"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/edittext_trubi" />
 
@@ -259,13 +200,13 @@
             <!--Phần tổng số kg lúa-->
             <TextView
                 android:id="@+id/textView_tongkylua"
+                style="@style/TextViewLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="24dp"
                 android:text="Tổng ký lúa"
-                style="@style/TextViewLabel"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView_info_tongbaolua" />
 
@@ -302,13 +243,13 @@
             <!--Phần tổng tiền-->
             <TextView
                 android:id="@+id/textView_thanhtien"
+                style="@style/TextViewLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="24dp"
                 android:text="Thành tiền"
-                style="@style/TextViewLabel"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView_info_tongkylua" />
 
@@ -345,13 +286,13 @@
             <!--Phần tiền cọc khách đứa trc-->
             <TextView
                 android:id="@+id/textView_tiencoc"
+                style="@style/TextViewLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="24dp"
                 android:text="Tiền cọc"
-                style="@style/TextViewLabel"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView_info_thanhtien" />
 
@@ -364,8 +305,9 @@
                 android:layout_marginTop="8dp"
                 android:background="@drawable/edit_text_bg_2"
                 android:inputType="number"
-                android:textSize="24sp"
+                android:selectAllOnFocus="true"
                 android:singleLine="true"
+                android:textSize="24sp"
                 app:layout_constraintEnd_toStartOf="@+id/textView_tiencoc_extra"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView_tiencoc" />
