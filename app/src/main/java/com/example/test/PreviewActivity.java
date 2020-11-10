@@ -99,15 +99,25 @@ public class PreviewActivity extends AppCompatActivity {
     private void updateHistory() {
         DatabaseHelper helper = new DatabaseHelper(this, DatabaseHelper.DATABASE_NAME, null, DatabaseHelper.DATABASE_VERSION);
         sqLiteDatabase = helper.getWritableDatabase();
+        String TenGiongLua;
+        int DonGia, BaoBi, SoBao, ThanhTien, TienCoc;
+        double TongSoKG;
+        TenGiongLua = editText_tenLua.getText().toString();
+        DonGia = Integer.parseInt(editText_dongia.getText().toString());
+        BaoBi = Integer.parseInt(editText_trubi.getText().toString());
+        TienCoc = Integer.parseInt(editText_tiencoc.getText().toString());
+        SoBao = Integer.parseInt(textView_tongbao.getText().toString());
+        TongSoKG = Double.parseDouble(textView_tongkg.getText().toString());
+        ThanhTien = Integer.parseInt(textView_thanhtien.getText().toString());
 
         String UPDATE_HISTORY = "UPDATE " + DatabaseContract.HistoryTable.TABLE_NAME +
-                " SET " + DatabaseContract.HistoryTable.COLUMN_TENGIONG + " = " + editText_tenLua.getText().toString() +
-                ", " + DatabaseContract.HistoryTable.COLUMN_DONGIA + " = " + editText_dongia.getText().toString() +
-                ", " + DatabaseContract.HistoryTable.COLUMN_BAOBI + " = " + editText_trubi.getText().toString() +
-                ", " + DatabaseContract.HistoryTable.COLUMN_TIENCOC + " = " + editText_tiencoc.getText().toString() +
-                ", " + DatabaseContract.HistoryTable.COLUMN_TONGBAO + " = " + textView_tongbao.getText().toString() +
-                ", " + DatabaseContract.HistoryTable.COLUMN_TONGKG + " = " + textView_tongkg.getText().toString() +
-                ", " + DatabaseContract.HistoryTable.COLUMN_THANHTIEN + " = " + textView_thanhtien.getText().toString() +
+                " SET " + DatabaseContract.HistoryTable.COLUMN_TENGIONG + " = " + TenGiongLua +
+                ", " + DatabaseContract.HistoryTable.COLUMN_DONGIA + " = " + DonGia +
+                ", " + DatabaseContract.HistoryTable.COLUMN_BAOBI + " = " + BaoBi +
+                ", " + DatabaseContract.HistoryTable.COLUMN_TIENCOC + " = " + TienCoc +
+                ", " + DatabaseContract.HistoryTable.COLUMN_TONGBAO + " = " + SoBao +
+                ", " + DatabaseContract.HistoryTable.COLUMN_TONGKG + " = " + TongSoKG +
+                ", " + DatabaseContract.HistoryTable.COLUMN_THANHTIEN + " = " + ThanhTien +
                 " WHERE " + DatabaseContract.HistoryTable.COLUMN_TIMESTAMP + " LIKE '%" + dateCreate + "%'" +
                 " AND " + DatabaseContract.HistoryTable.COLUMN_DATEJOIN + " LIKE '%" + dateJoin + "%';";
         sqLiteDatabase.execSQL(UPDATE_HISTORY);
@@ -117,7 +127,6 @@ public class PreviewActivity extends AppCompatActivity {
     public void onBackPressed() {
         updateHistory();
         Intent intent = new Intent(PreviewActivity.this, HistoryActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra("name", name);
         intent.putExtra("phone", phone);
         intent.putExtra("date", dateJoin);

@@ -294,9 +294,6 @@ public class InputWeightActivity extends AppCompatActivity
         tongBao = textView_info_sumOfBag.getText().toString();
         tongKG = textView_info_sumOfWeight.getText().toString();
         thanhTien = String.valueOf(money);
-        cv.put(DatabaseContract.HistoryTable.COLUMN_TONGBAO, tongBao);
-        cv.put(DatabaseContract.HistoryTable.COLUMN_TONGKG, tongKG);
-        cv.put(DatabaseContract.HistoryTable.COLUMN_THANHTIEN, thanhTien);
 
         String UPDATE_HISTORY = "UPDATE " + DatabaseContract.HistoryTable.TABLE_NAME +
                 " SET " + DatabaseContract.HistoryTable.COLUMN_TONGBAO + " = " + tongBao +
