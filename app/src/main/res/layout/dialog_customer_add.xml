@@ -20,7 +20,7 @@
     <EditText
         android:id="@+id/edittext_tenKH_dialog"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="40sp"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="8dp"
@@ -52,7 +52,7 @@
     <EditText
         android:id="@+id/edittext_sdt_dialog"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="40sp"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="8dp"

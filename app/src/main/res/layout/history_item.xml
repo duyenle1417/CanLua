@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="10dp">
+    android:layout_margin="10dp"
+    app:cardCornerRadius="15dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -226,8 +227,8 @@
 
             <ImageView
                 android:id="@+id/ic_expand_less"
-                android:layout_width="80dp"
-                android:layout_height="50dp"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
                 android:src="@drawable/ic_expand_less"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -237,8 +238,8 @@
 
         <ImageView
             android:id="@+id/ic_expand_more"
-            android:layout_width="80dp"
-            android:layout_height="50dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:src="@drawable/ic_expand_more"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

@@ -46,7 +46,7 @@
             <EditText
                 android:id="@+id/edittext_tenLua"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="8dp"
@@ -78,7 +78,7 @@
             <EditText
                 android:id="@+id/edittext_dongia"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="42dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="8dp"
