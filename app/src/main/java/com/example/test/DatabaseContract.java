@@ -7,6 +7,7 @@ public class DatabaseContract {
     private DatabaseContract(){}
 
     public static final class HistoryTable implements BaseColumns {
+        //public  static final int COLUMN_ID = 0;
         public static final String TABLE_NAME = "HistoryTable";
         public static final String COLUMN_TENKH = "nameCustomer";
         public static final String COLUMN_SDT = "phoneNumer";

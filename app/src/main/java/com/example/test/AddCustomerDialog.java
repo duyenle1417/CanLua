@@ -9,6 +9,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -16,14 +19,26 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDialogFragment;
 
+import com.google.android.material.textfield.TextInputLayout;
+
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 public class AddCustomerDialog extends AppCompatDialogFragment {
+    HomeActivity context;
+    TextInputLayout inputName, inputPhone;
     EditText editText_name;
     EditText editText_phone;
-    SQLiteDatabase sqLiteDatabase;
+    Button btnAdd;
+    ArrayList<Customer> arrayList;
+    //SQLiteDatabase sqLiteDatabase;
     AddCustomerListener listener;
+
+    public AddCustomerDialog(HomeActivity context, ArrayList<Customer> arrayList) {
+        this.context = context;
+        this.arrayList = arrayList;
+    }
 
     @NonNull
     @Override
@@ -35,18 +50,20 @@ public class AddCustomerDialog extends AppCompatDialogFragment {
         editText_name = view.findViewById(R.id.edittext_tenKH_dialog);
         editText_phone = view.findViewById(R.id.edittext_sdt_dialog);
 
+
         builder.setView(view)
                 .setTitle("Nhập thông tin khách hàng")
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        String name = editText_name.getText().toString();
-                        String phone = editText_phone.getText().toString();
-                        if (ValidateData(name)) {
-                            AddCustomer(name, phone);//DB
-                            listener.ApplyChange(name, phone);
+                        final String name = editText_name.getText().toString();
+                        final String phone = editText_phone.getText().toString();
+                        if(ValidateData(name)) {
+                            AddCustomer(name, phone);
+                            listener.getCustomerAll();
+                            Toast.makeText(context, "Đã thêm "+ name +" vào danh sách", Toast.LENGTH_SHORT).show();
                         } else {
-                            Toast.makeText(view.getContext(), "Lỗi! Không được để trống tên.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "Không được để tên trống!", Toast.LENGTH_SHORT).show();
                         }
                     }
                 })
@@ -84,24 +101,25 @@ public class AddCustomerDialog extends AppCompatDialogFragment {
     private void AddCustomer(String name, String phone) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         String date = dateFormat.format(Calendar.getInstance().getTime());//time lấy khi ấn OK
+
         DatabaseHelper helper = new DatabaseHelper(getContext(), DatabaseHelper.DATABASE_NAME, null, DatabaseHelper.DATABASE_VERSION);
-        sqLiteDatabase = helper.getWritableDatabase();
+        SQLiteDatabase db = helper.getWritableDatabase();
 
-        //
-        ContentValues cv = new ContentValues();
-        cv.put(DatabaseContract.CustomerTable.COLUMN_TENKH, name);
-        if (phone.length() > 0)
-            cv.put(DatabaseContract.CustomerTable.COLUMN_SDT, phone);
+        String ADD_CUSTOMER = null;
+
+        if(phone.length() > 0)
+            ADD_CUSTOMER = "INSERT INTO " + DatabaseContract.CustomerTable.TABLE_NAME + " ('"+ DatabaseContract.CustomerTable.COLUMN_TENKH +"', '"+ DatabaseContract.CustomerTable.COLUMN_SDT +"', '"+ DatabaseContract.CustomerTable.COLUMN_TIMESTAMP +"') "
+                    +"VALUES ('"+ name +"', '"+ phone +"', '"+ date +"');";
         else
-            cv.put(DatabaseContract.CustomerTable.COLUMN_SDT, "---");
-        cv.put(DatabaseContract.CustomerTable.COLUMN_TIMESTAMP, date);
+            ADD_CUSTOMER = "INSERT INTO " + DatabaseContract.CustomerTable.TABLE_NAME + " ('"+ DatabaseContract.CustomerTable.COLUMN_TENKH +"', '"+ DatabaseContract.CustomerTable.COLUMN_SDT +"', '"+ DatabaseContract.CustomerTable.COLUMN_TIMESTAMP +"') "
+                    +"VALUES ('"+ name +"', '---', '"+ date +"');";
+        db.execSQL(ADD_CUSTOMER);
 
-
-        //
-        sqLiteDatabase.insert(DatabaseContract.CustomerTable.TABLE_NAME, null, cv);
     }
 
     public interface AddCustomerListener {
-        void ApplyChange(String name, String phone);
+        //void ApplyChange(String name, String phone);
+        void getCustomerAll();
     }
+
 }

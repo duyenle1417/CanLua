@@ -1,39 +1,57 @@
 package com.example.test;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.EditText;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.sql.Array;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
 
-public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.CustomerViewHolder> {
+public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.CustomerViewHolder> implements Filterable {
 
     private static RecycleViewItemOnClick recycleViewItemOnClick;
+    private FragmentManager fragmentManager;
     Context context;
-    ArrayList<Customer> list;
+    List<Customer> list;
+    List<Customer> SearchList;
+    private EditText tenKH;
+    private EditText sdtKH;
 
-    /*public CustomerAdapter(ArrayList<Customer> obj, RecycleViewItemOnClick recycleViewItemOnClick) {
-        list = obj;
-        this.recycleViewItemOnClick = recycleViewItemOnClick;
-    }*/
-
-    public CustomerAdapter(Context context, ArrayList<Customer> list, RecycleViewItemOnClick recycleViewItemOnClick) {
+    public CustomerAdapter(Context context, List<Customer> list, RecycleViewItemOnClick recycleViewItemOnClick) {
         this.context = context;
         this.list = list;
+        this.SearchList = list;
         CustomerAdapter.recycleViewItemOnClick = recycleViewItemOnClick;
     }
+
 
     @NonNull
     @Override
@@ -45,7 +63,8 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.Custom
 
     @Override
     public void onBindViewHolder(@NonNull final CustomerViewHolder holder, final int position) {
-        Customer customer = list.get(position);
+        final Customer customer = list.get(position);
+        //databaseHelper = new DatabaseHelper(context, "canlua.db", null, 2);
 
         holder.textView_name.setText(customer.getHoTen());
         holder.textView_phone.setText(customer.getSDT());
@@ -72,26 +91,74 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.Custom
                                 ((HomeActivity) context).overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
                                 return true;
                             case R.id.menuEdit:
-                                break;
+                                final AlertDialog.Builder builder1 = new AlertDialog.Builder(context);
+                                LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                                View view = inflater.inflate(R.layout.dialog_edit_customer, null);
+
+                                tenKH = (EditText) view.findViewById(R.id.edittext_tenKH_dialogedit);
+                                sdtKH = (EditText) view.findViewById(R.id.edittext_sdt_dialogedit);;
+
+                                final String ten = customer.getHoTen();
+                                String sdt = customer.getSDT();
+
+                                tenKH.setText(ten);
+                                if(sdt.equals("---")){
+                                    sdtKH.setText("");
+                                }else
+                                    sdtKH.setText(sdt);
+
+                                builder1.setView(view)
+                                        .setTitle("Sửa thông tin")
+                                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                updateData(position);
+                                                Toast.makeText(context, "Đã sửa thành công!", Toast.LENGTH_SHORT).show();
+                                                getAll();
+                                            }
+                                        })
+                                        .setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+
+                                            }
+                                        });
+                                builder1.show();
+                                return true;
                             case R.id.menuDel:
-                                deleteData(position);
-                                Log.e("delete TEST", "item ######");
-                                //reset HomeActivity và lấy dữ liệu từ DB
-                                ((HomeActivity) context).finish();
-                                context.startActivity(((HomeActivity) context).getIntent());
-                                ((HomeActivity) context).overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
+                                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                                builder.setMessage("Bạn có chắn chắc muốn xóa " + list.get(position).getHoTen() + " không?");
+                                builder.setPositiveButton("Có", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        deleteData(position);
+                                        Toast.makeText(context, "Đã xóa thành công!" , Toast.LENGTH_SHORT).show();
+                                        getAll();
+                                    }
+                                });
+
+                                builder.setNegativeButton("Không", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.cancel();
+                                    }
+                                });
+                                builder.show();
                                 return true;
                             default:
                                 throw new IllegalStateException("Unexpected value: " + item.getItemId());
                         }
-                        return true;
+                        //return true;
                     }
+
                 });
             }
+
         });
 
         holder.itemView.setTag(list.get(position).getID());
     }
+
 
     @Override
     public int getItemCount() {
@@ -106,13 +173,43 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.Custom
                 " AND " + DatabaseContract.CustomerTable.COLUMN_TENKH + " LIKE '%" + list.get(position).getHoTen() + "%'" +
                 " AND " + DatabaseContract.CustomerTable._ID + " LIKE '%" + list.get(position).getID() + "%';";
         db.execSQL(DELETE_CUSTOMER);
-
-        String DELETE_HISTORY = "DELETE FROM " + DatabaseContract.HistoryTable.TABLE_NAME +
-                " WHERE " + DatabaseContract.HistoryTable.COLUMN_DATEJOIN + " LIKE '%" + list.get(position).getDate() + "%'" +
-                " AND " + DatabaseContract.HistoryTable.COLUMN_TENKH + " LIKE '%" + list.get(position).getHoTen() + "%'" +
-                " AND " + DatabaseContract.HistoryTable.COLUMN_SDT + " LIKE '%" + list.get(position).getSDT() + "%'";
-        db.execSQL(DELETE_HISTORY);
     }
+
+   @Override
+    public Filter getFilter() {
+        return SearchFilter;
+    }
+
+    private Filter SearchFilter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            ArrayList<Customer> filteredList = new ArrayList<>();
+
+            if (constraint == null || constraint.length() == 0) {
+                filteredList.addAll(SearchList);
+            }else {
+                String filterPattern = constraint.toString().toLowerCase().trim();
+
+                for (Customer item : SearchList) {
+                    if (item.getHoTen().toLowerCase().contains(filterPattern)) {
+                        filteredList.add(item);
+                    }
+                }
+            }
+
+            FilterResults results = new FilterResults();
+            results.values = filteredList;
+
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            list.clear();
+            list.addAll((Collection<? extends Customer>) results.values);
+            notifyDataSetChanged();
+        }
+    };
 
     public static class CustomerViewHolder extends RecyclerView.ViewHolder {
         public TextView textView_name;
@@ -137,4 +234,42 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.Custom
             });
         }
     }
+
+    public void updateData(int position) {
+        DatabaseHelper helper = new DatabaseHelper(context, DatabaseHelper.DATABASE_NAME, null, DatabaseHelper.DATABASE_VERSION);
+        SQLiteDatabase db = helper.getWritableDatabase();
+        String UPDATE_CUSTOMER = "UPDATE " + DatabaseContract.CustomerTable.TABLE_NAME + " SET " + DatabaseContract.CustomerTable.COLUMN_TENKH + " = '" + tenKH.getText().toString() +"'"
+                        + " , " + DatabaseContract.CustomerTable.COLUMN_SDT + " = '"+ sdtKH.getText().toString() +"'"
+                       + " WHERE " + DatabaseContract.CustomerTable._ID + " = '" + list.get(position).getID() + "';";
+        db.execSQL(UPDATE_CUSTOMER);
+        Toast.makeText(context, "Đã sửa thành công", Toast.LENGTH_SHORT).show();
+    }
+
+    private void getAll() {
+        DatabaseHelper helper = new DatabaseHelper(context, DatabaseHelper.DATABASE_NAME, null, DatabaseHelper.DATABASE_VERSION);
+        SQLiteDatabase sqLiteDatabase = helper.getReadableDatabase();
+
+        ArrayList<Customer> arrayList = new ArrayList<>();
+        String GET_ALL_DATA = "SELECT * FROM " + DatabaseContract.CustomerTable.TABLE_NAME +
+                " ORDER BY " + DatabaseContract.CustomerTable._ID + " DESC;";
+        Cursor cursor = sqLiteDatabase.rawQuery(GET_ALL_DATA, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Customer customer = new Customer();
+                customer.setID(Integer.parseInt(cursor.getString(cursor.getColumnIndex(DatabaseContract.CustomerTable._ID))));
+                customer.setHoTen(cursor.getString(cursor.getColumnIndex(DatabaseContract.CustomerTable.COLUMN_TENKH)));
+                customer.setSDT(cursor.getString(cursor.getColumnIndex(DatabaseContract.CustomerTable.COLUMN_SDT)));
+                customer.setDate(cursor.getString(cursor.getColumnIndex(DatabaseContract.CustomerTable.COLUMN_TIMESTAMP)));
+                arrayList.add(customer);
+            } while (cursor.moveToNext());
+        }
+        list.clear();
+        list.addAll(arrayList);
+        notifyDataSetChanged();
+        cursor.close();
+
+    }
+
 }
+

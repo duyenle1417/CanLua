@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".HomeActivity"
+            android:name=".IntroActivity"
             android:configChanges="screenLayout|screenSize|orientation"
             android:launchMode="singleTask"
             android:windowSoftInputMode="stateAlwaysHidden">
@@ -40,6 +40,10 @@
             android:name=".PreviewActivity"
             android:windowSoftInputMode="stateAlwaysHidden">
 
+        </activity>
+
+        <activity android:name=".HomeActivity"
+            android:windowSoftInputMode="stateAlwaysHidden">
         </activity>
     </application>
 

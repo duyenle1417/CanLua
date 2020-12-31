@@ -5,11 +5,20 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.SearchView;
+import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -44,6 +53,7 @@ public class HomeActivity extends AppCompatActivity
     Toolbar toolbar;
     ArrayList<HeaderNavigation> arrayListHeader;
     adapterHeaderNavigation adapterHeader;
+    Switch switch_name, switch_time;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -60,10 +70,31 @@ public class HomeActivity extends AppCompatActivity
         btn_add_customer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AddCustomerDialog dialog = new AddCustomerDialog();
+                AddCustomerDialog dialog = new AddCustomerDialog(HomeActivity.this, customerlist);
                 dialog.show(getSupportFragmentManager(), "dialog add new customer");
             }
         });
+
+        switch_name.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    getCustomerAllName();
+                    switch_time.setChecked(false);
+                }
+            }
+        });
+
+        switch_time.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked) {
+                    getCustomerAll();
+                    switch_name.setChecked(false);
+                }
+            }
+        });
+
     }
 
     //header cho navigation drawer - hiển thị tên ap vầ version
@@ -134,6 +165,7 @@ public class HomeActivity extends AppCompatActivity
         });
     }
 
+
     //ánh xạ view và lấy data từ DB về hiển thị trên recycleview
     private void getView() {
         //ánh xạ view
@@ -145,7 +177,10 @@ public class HomeActivity extends AppCompatActivity
         navigationView = findViewById(R.id.navigationView);
         listView = findViewById(R.id.navigationListview);
         header = findViewById(R.id.navigationHeader);
+        switch_name = findViewById(R.id.switch_name);
+        switch_time = findViewById(R.id.switch_time);
         customerlist = new ArrayList<>();
+
 
         //adapter và layoutmanager cho recycleview
         adapter = new CustomerAdapter(this, customerlist, this);
@@ -166,27 +201,23 @@ public class HomeActivity extends AppCompatActivity
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 delete((Integer) viewHolder.itemView.getTag());
+                Toast.makeText(HomeActivity.this, "Đã xóa thành công!", Toast.LENGTH_SHORT).show();
             }
         }).attachToRecyclerView(recyclerView_customer);
 
 
         getCustomerAll();//lấy dữ liệu từ DB table customer
-        if (customerlist.isEmpty()) {
-            textView_notify_empty_customer.setVisibility(View.VISIBLE);
-        } else {
-            textView_notify_empty_customer.setVisibility(View.GONE);
-        }
     }
 
+
     //lấy dữ liệu từ DB vô ArrayList
-    private void getCustomerAll() {
+    public void getCustomerAll() {
         DatabaseHelper helper = new DatabaseHelper(this, DatabaseHelper.DATABASE_NAME, null, DatabaseHelper.DATABASE_VERSION);
         sqLiteDatabase = helper.getReadableDatabase();
 
         ArrayList<Customer> list = new ArrayList<>();
         String GET_ALL_DATA = "SELECT * FROM " + DatabaseContract.CustomerTable.TABLE_NAME +
-                " ORDER BY " + DatabaseContract.CustomerTable.COLUMN_TENKH + " ASC, "
-                + DatabaseContract.CustomerTable._ID + " DESC;";
+                " ORDER BY " + DatabaseContract.CustomerTable._ID + " DESC;";
         Cursor cursor = sqLiteDatabase.rawQuery(GET_ALL_DATA, null);
 
         if (cursor.moveToFirst()) {
@@ -203,8 +234,47 @@ public class HomeActivity extends AppCompatActivity
         //đưa dữ liệu vào customerlist và gọi adapter
         customerlist.clear();
         customerlist.addAll(list);
+        //recyclerView_customer.setAdapter(adapter);
         adapter.notifyDataSetChanged();
         cursor.close();
+        if (customerlist.size() != 0) {
+            textView_notify_empty_customer.setVisibility(View.GONE);
+        } else {
+            textView_notify_empty_customer.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void getCustomerAllName() {
+        DatabaseHelper helper = new DatabaseHelper(this, DatabaseHelper.DATABASE_NAME, null, DatabaseHelper.DATABASE_VERSION);
+        sqLiteDatabase = helper.getReadableDatabase();
+
+        ArrayList<Customer> list = new ArrayList<>();
+        String GET_ALL_DATA = "SELECT * FROM " + DatabaseContract.CustomerTable.TABLE_NAME +
+                " ORDER BY " + DatabaseContract.CustomerTable.COLUMN_TENKH + " ASC;";
+        Cursor cursor = sqLiteDatabase.rawQuery(GET_ALL_DATA, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Customer customer = new Customer();
+                customer.setID(Integer.parseInt(cursor.getString(cursor.getColumnIndex(DatabaseContract.CustomerTable._ID))));
+                customer.setHoTen(cursor.getString(cursor.getColumnIndex(DatabaseContract.CustomerTable.COLUMN_TENKH)));
+                customer.setSDT(cursor.getString(cursor.getColumnIndex(DatabaseContract.CustomerTable.COLUMN_SDT)));
+                customer.setDate(cursor.getString(cursor.getColumnIndex(DatabaseContract.CustomerTable.COLUMN_TIMESTAMP)));
+                list.add(customer);
+            } while (cursor.moveToNext());
+        }
+
+        //đưa dữ liệu vào customerlist và gọi adapter
+        customerlist.clear();
+        customerlist.addAll(list);
+        //recyclerView_customer.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+        cursor.close();
+        if (customerlist.size() != 0) {
+            textView_notify_empty_customer.setVisibility(View.GONE);
+        } else {
+            textView_notify_empty_customer.setVisibility(View.VISIBLE);
+        }
     }
 
     //cardview clicked
@@ -218,7 +288,7 @@ public class HomeActivity extends AppCompatActivity
         HomeActivity.this.overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
     }
 
-    @Override
+    ///@Override
     public void ApplyChange(String name, String phone) {
         //reset lại activity đồng thời lấy lại view mới
         this.finish();
@@ -237,5 +307,29 @@ public class HomeActivity extends AppCompatActivity
         } else {
             textView_notify_empty_customer.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.search, menu);
+
+        SearchView searchView = (SearchView) menu.findItem(R.id.menuSearch).getActionView();
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                adapter.getFilter().filter(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                getCustomerAll();
+                adapter.getFilter().filter(newText);
+                Log.e("AAAA", newText);
+                return false;
+            }
+        });
+        return super.onCreateOptionsMenu(menu);
     }
 }

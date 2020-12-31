@@ -72,7 +72,7 @@ public class HistoryActivity extends AppCompatActivity {
         textView_notify_empty_history = findViewById(R.id.history_notify_empty_recycleview);
         historyList = new ArrayList<>();
 
-        adapter = new HistoryAdapter(this, historyList);
+        adapter = new HistoryAdapter(historyList, this);
         recyclerView_history.setAdapter(adapter);
 
         layoutManager = new LinearLayoutManager(this);
@@ -97,11 +97,6 @@ public class HistoryActivity extends AppCompatActivity {
 
         //lấy dữ liệu từ DB
         getHistoryAll();
-        if (historyList.isEmpty()) {
-            textView_notify_empty_history.setVisibility(View.VISIBLE);
-        } else {
-            textView_notify_empty_history.setVisibility(View.GONE);
-        }
     }
 
     private void delete(Integer tag) {
@@ -117,7 +112,7 @@ public class HistoryActivity extends AppCompatActivity {
         }
     }
 
-    private void getHistoryAll() {
+    public void getHistoryAll() {
         DatabaseHelper helper = new DatabaseHelper(this, DatabaseHelper.DATABASE_NAME, null, DatabaseHelper.DATABASE_VERSION);
         sqLiteDatabase = helper.getReadableDatabase();
 
@@ -153,6 +148,11 @@ public class HistoryActivity extends AppCompatActivity {
         historyList.addAll(list);
         adapter.notifyDataSetChanged();
         cursor.close();
+        if (historyList.size() == 0) {
+            textView_notify_empty_history.setVisibility(View.VISIBLE);
+        } else {
+            textView_notify_empty_history.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -170,5 +170,23 @@ public class HistoryActivity extends AppCompatActivity {
                 return true;
         }
         return false;
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(HistoryActivity.this, HomeActivity.class);
+        intent.putExtra("name", name);
+        intent.putExtra("phone", phone);
+        //intent.putExtra("date", dateJoin);
+        intent.putExtra("reload", "yes");
+        HistoryActivity.this.startActivity(intent);
+        HistoryActivity.this.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
+        HistoryActivity.this.finish();
+    }
+
+    @Override
+    protected void onStart() {
+        getHistoryAll();
+        super.onStart();
     }
 }

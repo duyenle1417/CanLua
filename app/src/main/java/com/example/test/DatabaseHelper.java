@@ -187,4 +187,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         void deleteHistory();
     }
+
+    public void QueryData(String sql) {
+        SQLiteDatabase database = getWritableDatabase();
+        database.execSQL(sql);
+    }
 }
