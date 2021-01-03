@@ -31,5 +31,9 @@
     <style name="ColorSwitchStyle">
         <item name="colorControlActivated">@color/colorPrimary</item>
     </style>
+    
+    <style name="SplashScreen" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash</item>
+    </style>
 
 </resources>
