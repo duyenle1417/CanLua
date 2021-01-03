@@ -15,6 +15,7 @@ public class IntroActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        /*
         setContentView(R.layout.intro);
 
         tv_intro = findViewById(R.id.tv_continue);
@@ -26,6 +27,10 @@ public class IntroActivity extends AppCompatActivity {
                 overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
             }
         });
+         */
+
+        startActivity(new Intent(IntroActivity.this, HomeActivity.class));
+        this.finish();
     }
 
     @Override

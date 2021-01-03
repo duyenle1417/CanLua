@@ -12,7 +12,6 @@
         <activity
             android:name=".IntroActivity"
             android:configChanges="screenLayout|screenSize|orientation"
-            android:launchMode="singleTask"
             android:theme="@style/SplashScreen"
             android:windowSoftInputMode="stateAlwaysHidden">
             <intent-filter>
@@ -45,7 +44,10 @@
 
         <activity
             android:name=".HomeActivity"
-            android:windowSoftInputMode="stateAlwaysHidden"></activity>
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="stateAlwaysHidden">
+
+        </activity>
     </application>
 
 </manifest>

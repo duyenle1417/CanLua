@@ -345,9 +345,4 @@ public class HomeActivity extends AppCompatActivity
         });
         return super.onCreateOptionsMenu(menu);
     }
-
-    @Override
-    public void onBackPressed() {
-
-    }
 }
