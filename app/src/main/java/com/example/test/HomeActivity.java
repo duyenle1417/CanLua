@@ -68,9 +68,14 @@ public class HomeActivity extends AppCompatActivity
 
         //btn thêm vào customer mới - hiện dialog
         btn_add_customer.setOnClickListener(new View.OnClickListener() {
+            AddCustomerDialog dialog;
             @Override
             public void onClick(View v) {
-                AddCustomerDialog dialog = new AddCustomerDialog(HomeActivity.this, customerlist);
+                if(switch_name.isChecked()) {
+                    dialog = new AddCustomerDialog(HomeActivity.this, customerlist, true);
+                } else {
+                    dialog = new AddCustomerDialog(HomeActivity.this, customerlist, false);
+                }
                 dialog.show(getSupportFragmentManager(), "dialog add new customer");
             }
         });
@@ -184,6 +189,7 @@ public class HomeActivity extends AppCompatActivity
 
         //adapter và layoutmanager cho recycleview
         adapter = new CustomerAdapter(this, customerlist, this);
+
         layoutManager = new LinearLayoutManager(this);
 
         //adapter = new HomeAdapter(this, getAllItems(), this);
@@ -201,12 +207,19 @@ public class HomeActivity extends AppCompatActivity
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 delete((Integer) viewHolder.itemView.getTag());
+                if (switch_name.isChecked())
+                    getCustomerAllName();
+                else
+                    getCustomerAll();
                 Toast.makeText(HomeActivity.this, "Đã xóa thành công!", Toast.LENGTH_SHORT).show();
             }
         }).attachToRecyclerView(recyclerView_customer);
 
 
-        getCustomerAll();//lấy dữ liệu từ DB table customer
+        if (switch_name.isChecked())
+            getCustomerAllName();
+        else
+            getCustomerAll();//lấy dữ liệu từ DB table customer
     }
 
 
@@ -331,5 +344,10 @@ public class HomeActivity extends AppCompatActivity
             }
         });
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public void onBackPressed() {
+
     }
 }

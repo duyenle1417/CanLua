@@ -34,10 +34,12 @@ public class AddCustomerDialog extends AppCompatDialogFragment {
     ArrayList<Customer> arrayList;
     //SQLiteDatabase sqLiteDatabase;
     AddCustomerListener listener;
+    Boolean check;
 
-    public AddCustomerDialog(HomeActivity context, ArrayList<Customer> arrayList) {
+    public AddCustomerDialog(HomeActivity context, ArrayList<Customer> arrayList, Boolean check) {
         this.context = context;
         this.arrayList = arrayList;
+        this.check = check;
     }
 
     @NonNull
@@ -60,7 +62,12 @@ public class AddCustomerDialog extends AppCompatDialogFragment {
                         final String phone = editText_phone.getText().toString();
                         if(ValidateData(name)) {
                             AddCustomer(name, phone);
-                            listener.getCustomerAll();
+                            //listener.getCustomerAll();
+                            //Toast.makeText(context, "Đã thêm "+ name +" vào danh sách", Toast.LENGTH_SHORT).show();
+                            if(check ==true)
+                                listener.getCustomerAllName();
+                            else
+                                listener.getCustomerAll();
                             Toast.makeText(context, "Đã thêm "+ name +" vào danh sách", Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(context, "Không được để tên trống!", Toast.LENGTH_SHORT).show();
@@ -120,6 +127,7 @@ public class AddCustomerDialog extends AppCompatDialogFragment {
     public interface AddCustomerListener {
         //void ApplyChange(String name, String phone);
         void getCustomerAll();
+        void getCustomerAllName();
     }
 
 }

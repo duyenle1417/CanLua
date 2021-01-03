@@ -15,11 +15,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,12 +40,16 @@ import java.util.Locale;
 public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.CustomerViewHolder> implements Filterable {
 
     private static RecycleViewItemOnClick recycleViewItemOnClick;
+    CompoundButton.OnCheckedChangeListener click;
     private FragmentManager fragmentManager;
     Context context;
     List<Customer> list;
     List<Customer> SearchList;
     private EditText tenKH;
     private EditText sdtKH;
+    //HomeActivity homeActivity;
+    Switch switch_name, switch_time;
+
 
     public CustomerAdapter(Context context, List<Customer> list, RecycleViewItemOnClick recycleViewItemOnClick) {
         this.context = context;
@@ -51,7 +57,6 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.Custom
         this.SearchList = list;
         CustomerAdapter.recycleViewItemOnClick = recycleViewItemOnClick;
     }
-
 
     @NonNull
     @Override
@@ -66,6 +71,8 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.Custom
         final Customer customer = list.get(position);
         //databaseHelper = new DatabaseHelper(context, "canlua.db", null, 2);
 
+        switch_name = ((HomeActivity) context).findViewById(R.id.switch_name);
+        switch_time = ((HomeActivity) context).findViewById(R.id.switch_time);
         holder.textView_name.setText(customer.getHoTen());
         holder.textView_phone.setText(customer.getSDT());
         holder.textView_date.setText(customer.getDate());
@@ -113,8 +120,11 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.Custom
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
                                                 updateData(position);
+                                                if(switch_name.isChecked())
+                                                    getAllName();
+                                                else
+                                                    getAll();
                                                 Toast.makeText(context, "Đã sửa thành công!", Toast.LENGTH_SHORT).show();
-                                                getAll();
                                             }
                                         })
                                         .setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
@@ -133,14 +143,17 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.Custom
                                     public void onClick(DialogInterface dialog, int which) {
                                         deleteData(position);
                                         Toast.makeText(context, "Đã xóa thành công!" , Toast.LENGTH_SHORT).show();
-                                        getAll();
+                                        if(switch_name.isChecked())
+                                            getAllName();
+                                        else
+                                            getAll();
                                     }
                                 });
 
                                 builder.setNegativeButton("Không", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        dialog.cancel();
+                                        //dialog.cancel();
                                     }
                                 });
                                 builder.show();
@@ -191,7 +204,7 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.Custom
                 String filterPattern = constraint.toString().toLowerCase().trim();
 
                 for (Customer item : SearchList) {
-                    if (item.getHoTen().toLowerCase().contains(filterPattern)) {
+                    if (item.getHoTen().toLowerCase().contains(filterPattern) || item.getSDT().contains(filterPattern) ) {
                         filteredList.add(item);
                     }
                 }
@@ -269,6 +282,31 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.Custom
         notifyDataSetChanged();
         cursor.close();
 
+    }
+
+    private void getAllName() {
+        DatabaseHelper helper = new DatabaseHelper(context, DatabaseHelper.DATABASE_NAME, null, DatabaseHelper.DATABASE_VERSION);
+        SQLiteDatabase sqLiteDatabase = helper.getReadableDatabase();
+
+        ArrayList<Customer> arrayList = new ArrayList<>();
+        String GET_ALL_DATA = "SELECT * FROM " + DatabaseContract.CustomerTable.TABLE_NAME +
+                " ORDER BY " + DatabaseContract.CustomerTable.COLUMN_TENKH + " ASC;";
+        Cursor cursor = sqLiteDatabase.rawQuery(GET_ALL_DATA, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Customer customer = new Customer();
+                customer.setID(Integer.parseInt(cursor.getString(cursor.getColumnIndex(DatabaseContract.CustomerTable._ID))));
+                customer.setHoTen(cursor.getString(cursor.getColumnIndex(DatabaseContract.CustomerTable.COLUMN_TENKH)));
+                customer.setSDT(cursor.getString(cursor.getColumnIndex(DatabaseContract.CustomerTable.COLUMN_SDT)));
+                customer.setDate(cursor.getString(cursor.getColumnIndex(DatabaseContract.CustomerTable.COLUMN_TIMESTAMP)));
+                arrayList.add(customer);
+            } while (cursor.moveToNext());
+        }
+        list.clear();
+        list.addAll(arrayList);
+        notifyDataSetChanged();
+        cursor.close();
     }
 
 }
