@@ -89,7 +89,8 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
                                     public void onClick(DialogInterface dialog, int which) {
                                         deleteData(position);
                                         Toast.makeText(context, "Đã xóa thành công!", Toast.LENGTH_SHORT).show();
-                                        getHistoryAll();
+                                        notifyItemRemoved(position);
+                                        notifyDataSetChanged();
                                     }
                                 });
 
