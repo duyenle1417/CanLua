@@ -17,8 +17,6 @@ import androidx.appcompat.widget.Toolbar;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
 
 public class PreviewActivity extends AppCompatActivity {
     String dateJoin, dateCreate, name, phone;
@@ -60,7 +58,6 @@ public class PreviewActivity extends AppCompatActivity {
         history = new History();
         getHistory();
     }
-
 
 
     private void AddMoney() {
@@ -116,24 +113,26 @@ public class PreviewActivity extends AppCompatActivity {
         DatabaseHelper helper = new DatabaseHelper(this, DatabaseHelper.DATABASE_NAME, null, DatabaseHelper.DATABASE_VERSION);
         sqLiteDatabase = helper.getWritableDatabase();
         String TenGiongLua;
-        int DonGia, BaoBi, SoBao, ThanhTien, TienCoc;
-        double TongSoKG;
+        int DonGia, BaoBi, SoBao, TienCoc;
+        double TongSoKG, money;
+        String ThanhTien;
         TenGiongLua = editText_tenLua.getText().toString();
         DonGia = Integer.parseInt(editText_dongia.getText().toString());
         BaoBi = Integer.parseInt(editText_trubi.getText().toString());
         TienCoc = Integer.parseInt(editText_tiencoc.getText().toString());
         SoBao = Integer.parseInt(textView_tongbao.getText().toString());
         TongSoKG = Double.parseDouble(textView_tongkg.getText().toString());
-        ThanhTien = Integer.parseInt(textView_thanhtien.getText().toString());
+        money = DonGia * (TongSoKG - ((1.0 / BaoBi) * SoBao));
+        ThanhTien = String.valueOf(money);
 
-        String UPDATE_HISTORY = "UPDATE " + DatabaseContract.HistoryTable.TABLE_NAME + " SET " + DatabaseContract.HistoryTable.COLUMN_TENGIONG + " = '" + TenGiongLua +"'"
-                        + ", " + DatabaseContract.HistoryTable.COLUMN_DONGIA + " = '"+ DonGia +"'"
-                        + ", " + DatabaseContract.HistoryTable.COLUMN_BAOBI + " = '"+ BaoBi +"'"
-                        + ", " + DatabaseContract.HistoryTable.COLUMN_TIENCOC + " = '"+ TienCoc +"'"
-                        + ", " + DatabaseContract.HistoryTable.COLUMN_TONGBAO + " = '"+ SoBao +"'"
-                        + ", " + DatabaseContract.HistoryTable.COLUMN_TONGKG + " = '"+ TongSoKG +"'"
-                        + ", " + DatabaseContract.HistoryTable.COLUMN_THANHTIEN + " = '"+ ThanhTien +"'"
-                        + " WHERE " + DatabaseContract.HistoryTable.COLUMN_TIMESTAMP + " = '"+ dateCreate +"';";
+        String UPDATE_HISTORY = "UPDATE " + DatabaseContract.HistoryTable.TABLE_NAME + " SET " + DatabaseContract.HistoryTable.COLUMN_TENGIONG + " = '" + TenGiongLua + "'"
+                + ", " + DatabaseContract.HistoryTable.COLUMN_DONGIA + " = '" + DonGia + "'"
+                + ", " + DatabaseContract.HistoryTable.COLUMN_BAOBI + " = '" + BaoBi + "'"
+                + ", " + DatabaseContract.HistoryTable.COLUMN_TIENCOC + " = '" + TienCoc + "'"
+                + ", " + DatabaseContract.HistoryTable.COLUMN_TONGBAO + " = '" + SoBao + "'"
+                + ", " + DatabaseContract.HistoryTable.COLUMN_TONGKG + " = '" + TongSoKG + "'"
+                + ", " + DatabaseContract.HistoryTable.COLUMN_THANHTIEN + " = " + ThanhTien
+                + " WHERE " + DatabaseContract.HistoryTable.COLUMN_TIMESTAMP + " = '" + dateCreate + "';";
         sqLiteDatabase.execSQL(UPDATE_HISTORY);
         Toast.makeText(this, "Đã sửa thành công", Toast.LENGTH_SHORT).show();
     }
