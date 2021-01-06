@@ -337,7 +337,10 @@ public class HomeActivity extends AppCompatActivity
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                getCustomerAll();
+                if (switch_name.isChecked())
+                    getCustomerAllName();
+                else
+                    getCustomerAll();
                 adapter.getFilter().filter(newText);
                 Log.e("AAAA", newText);
                 return false;
